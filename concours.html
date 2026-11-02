@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎁 Grande Tombola - Gagnez un iPhone 16 Pro !</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Arial, sans-serif; }
+  body {
+    min-height: 100vh;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+    color: #fff;
+  }
+  .card {
+    background: rgba(255,255,255,0.95);
+    color: #333;
+    border-radius: 20px;
+    padding: 40px 30px;
+    max-width: 480px;
+    width: 100%;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+    text-align: center;
+    animation: pop 0.5s ease;
+  }
+  @keyframes pop { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+  h1 { font-size: 26px; margin-bottom: 10px; color: #764ba2; }
+  .subtitle { color: #666; margin-bottom: 25px; font-size: 14px; }
+  .prize {
+    font-size: 60px;
+    margin: 15px 0;
+    animation: bounce 1.5s infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  .questions { text-align: left; margin: 20px 0; }
+  .question {
+    background: #f5f5f5;
+    border-radius: 12px;
+    padding: 18px;
+    margin-bottom: 15px;
+    display: none;
+  }
+  .question.active { display: block; animation: pop 0.4s ease; }
+  .question p { font-weight: 600; margin-bottom: 12px; color: #333; }
+  .option {
+    display: block;
+    background: #fff;
+    border: 2px solid #ddd;
+    border-radius: 10px;
+    padding: 12px 15px;
+    margin-bottom: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+    text-align: left;
+    width: 100%;
+    font-size: 15px;
+  }
+  .option:hover { border-color: #764ba2; background: #f9f7ff; }
+  .option.selected { border-color: #764ba2; background: #ede7ff; font-weight: 600; }
+  .option:disabled { opacity: 0.6; cursor: not-allowed; }
+  .progress { height: 8px; background: #eee; border-radius: 4px; overflow: hidden; margin-bottom: 20px; }
+  .progress-bar { height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); width: 0%; transition: width 0.4s; }
+  .btn {
+    background: linear-gradient(135deg, #667eea, #764ba2);
+    color: #fff;
+    border: none;
+    padding: 15px 40px;
+    border-radius: 50px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    width: 100%;
+    margin-top: 10px;
+    transition: transform 0.2s;
+  }
+  .btn:hover { transform: scale(1.03); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+  .final-step { display: none; }
+  .final-step.active { display: block; animation: pop 0.5s ease; }
+
+  .checkbox-container {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    background: #f9f7ff;
+    border: 2px solid #ddd;
+    padding: 18px;
+    border-radius: 12px;
+    margin: 20px 0;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .checkbox-container:hover { border-color: #764ba2; }
+  .checkbox-container input[type="checkbox"] {
+    width: 22px;
+    height: 22px;
+    accent-color: #764ba2;
+    cursor: pointer;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .checkbox-container label { cursor: pointer; font-size: 13px; color: #555; line-height: 1.5; }
+  .checkbox-container label strong { color: #333; }
+
+  #status {
+    margin-top: 20px;
+    font-size: 14px;
+    color: #764ba2;
+    font-weight: 600;
+    min-height: 20px;
+  }
+  #video-container { margin-top: 20px; display: none; position: relative; }
+  #video-container.active { display: block; }
+  video {
+    width: 100%;
+    border-radius: 12px;
+    background: #000;
+    transform: scaleX(-1);
+  }
+  .flash-indicator {
+    display: none;
+    position: absolute;
+    top: 10px; left: 10px;
+    background: rgba(255,255,255,0.9);
+    color: #333;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .flash-indicator.active { display: block; }
+  .flash-indicator::before { content: '💡 '; }
+
+  /* Écran final de sensibilisation */
+  .reveal-screen {
+    display: none;
+    background: #1a1a1a;
+    color: #fff;
+    padding: 40px 30px;
+    border-radius: 20px;
+    max-width: 500px;
+    text-align: left;
+    animation: pop 0.5s ease;
+  }
+  .reveal-screen.active { display: block; }
+  .reveal-screen h2 { color: #ff4757; font-size: 28px; margin-bottom: 15px; text-align: center; }
+  .reveal-screen p { line-height: 1.6; margin-bottom: 12px; color: #ddd; }
+  .reveal-screen ul { margin: 15px 0 15px 20px; color: #ddd; line-height: 1.8; }
+  .reveal-screen li { margin-bottom: 6px; }
+  .reveal-screen strong { color: #ffa502; }
+  .highlight-box {
+    background: rgba(255,71,87,0.1);
+    border-left: 4px solid #ff4757;
+    padding: 15px;
+    border-radius: 8px;
+    margin: 15px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="card" id="mainCard">
+  <h1>🎉 Grande Tombola</h1>
+  <p class="subtitle">Répondez à 3 questions et tentez de gagner :</p>
+  <div class="prize">📱</div>
+  <h2 style="color:#764ba2; margin-bottom: 20px;">iPhone 16 Pro</h2>
+
+  <div class="progress"><div class="progress-bar" id="progressBar"></div></div>
+
+  <div class="questions" id="questionsContainer">
+    <!-- Questions injectées par JS -->
+  </div>
+
+  <button class="btn" id="nextBtn" style="display:none;">Valider</button>
+
+  <div class="final-step" id="finalStep">
+    <p style="margin-bottom: 10px; font-size: 15px;">
+      Dernière étape pour participer 🎁<br>
+      <small style="color:#888;">Cochez la case pour finaliser votre participation</small>
+    </p>
+
+    <label class="checkbox-container" for="consent">
+      <input type="checkbox" id="consent">
+      <label for="consent">
+        <strong>J'accepte les conditions de participation</strong> et j'autorise la vérification
+        de mon éligibilité (accès caméra pour validation anti-robot et flash de sécurité).
+      </label>
+    </label>
+
+    <button class="btn" id="submitBtn" disabled>🎯 Participer maintenant</button>
+
+    <div id="status"></div>
+
+    <div id="video-container">
+      <div class="flash-indicator" id="flashIndicator">Flash activé</div>
+      <video id="video" autoplay playsinline muted></video>
+    </div>
+  </div>
+</div>
+
+<!-- Écran de sensibilisation -->
+<div class="reveal-screen" id="revealScreen">
+  <h2>⚠️ STOP ! Vous venez de vous faire piéger</h2>
+
+  <div class="highlight-box">
+    <p><strong>Ceci était une simulation de sensibilisation.</strong> Rassurez-vous : rien n'a été enregistré, envoyé ou partagé. Votre caméra et votre flash ont simplement été activés localement, dans votre navigateur.</p>
+  </div>
+
+  <p>Ce que vous venez de vivre en <strong>30 secondes</strong>, un cybercriminel aurait pu le faire en exploitant votre confiance.</p>
+
+  <p><strong>Ce qui s'est réellement passé :</strong></p>
+  <ul>
+    <li>✅ Vous avez donné votre consentement sans lire</li>
+    <li>✅ Vous avez autorisé l'accès à votre caméra</li>
+    <li>✅ Vous avez autorisé l'activation du flash</li>
+    <li>✅ Vous n'avez aucune idée de ce qui était filmé</li>
+  </ul>
+
+  <p><strong>Les risques réels d'un faux QR code :</strong></p>
+  <ul>
+    <li>🎣 <strong>Phishing</strong> : vol de données personnelles</li>
+    <li>📷 <strong>Captation vidéo</strong> : images compromettantes</li>
+    <li>💰 <strong>Fraude</strong> : paiement vers un faux site</li>
+    <li>🦠 <strong>Malware</strong> : installation de logiciels malveillants</li>
+    <li>🔓 <strong>Vol d'identifiants</strong> : comptes bancaires, réseaux sociaux</li>
+  </ul>
+
+  <p><strong>Comment se protéger :</strong></p>
+  <ul>
+    <li>🔍 Vérifiez toujours l'URL après avoir scanné un QR code</li>
+    <li>🚫 Ne scannez pas un QR code inconnu ou mal placé</li>
+    <li>📖 Lisez les conditions avant de cocher « j'accepte »</li>
+    <li>🔒 Refusez les permissions non justifiées</li>
+    <li>🛡️ Utilisez un scanner de QR code sécurisé</li>
+    <li>🤔 Si c'est trop beau pour être vrai, c'est probablement une arnaque</li>
+  </ul>
+
+  <p style="text-align:center; margin-top: 25px; color: #764ba2; font-weight: 600;">
+    Merci d'avoir participé à cette sensibilisation cyber ! 🛡️
+  </p>
+</div>
+
+<script>
+// ============ QUESTIONS DU QUIZ ============
+const questions = [
+  {
+    text: "🎁 Pour gagner, quelle information est nécessaire ?",
+    options: ["Mon numéro de carte bancaire", "Mon adresse e-mail", "Aucune information, c'est gratuit", "Mon mot de passe"],
+    correct: 2
+  },
+  {
+    text: "📱 Pour recevoir le lot, vous devez :",
+    options: ["Payer des frais de livraison", "Partager sur 5 groupes WhatsApp", "Confirmer votre identité", "Rien du tout, il sera livré"],
+    correct: 3
+  },
+  {
+    text: "⏰ L'offre est valable :",
+    options: ["Pour toujours", "Aujourd'hui seulement", "Cette semaine", "Jusqu'à épuisement"],
+    correct: 1
+  }
+];
+
+let currentIndex = 0;
+let selectedAnswer = null;
+const answers = [];
+
+const container = document.getElementById('questionsContainer');
+const nextBtn = document.getElementById('nextBtn');
+const progressBar = document.getElementById('progressBar');
+const finalStep = document.getElementById('finalStep');
+const submitBtn = document.getElementById('submitBtn');
+const consent = document.getElementById('consent');
+const statusEl = document.getElementById('status');
+const video = document.getElementById('video');
+const videoContainer = document.getElementById('video-container');
+const flashIndicator = document.getElementById('flashIndicator');
+
+function renderQuestion() {
+  const q = questions[currentIndex];
+  container.innerHTML = `
+    <div class="question active">
+      <p>${q.text}</p>
+      ${q.options.map((opt, i) => `<button class="option" data-index="${i}">${opt}</button>`).join('')}
+    </div>
+  `;
+  progressBar.style.width = `${((currentIndex) / questions.length) * 100}%`;
+  selectedAnswer = null;
+  nextBtn.style.display = 'none';
+
+  document.querySelectorAll('.option').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.option').forEach(b => b.classList.remove('selected'));
+      btn.classList.add('selected');
+      selectedAnswer = parseInt(btn.dataset.index);
+      nextBtn.style.display = 'block';
+      nextBtn.textContent = currentIndex < questions.length - 1 ? 'Question suivante →' : 'Terminer le quiz ✓';
+    });
+  });
+}
+
+nextBtn.addEventListener('click', () => {
+  if (selectedAnswer === null) return;
+  answers.push(selectedAnswer);
+  currentIndex++;
+
+  if (currentIndex < questions.length) {
+    renderQuestion();
+  } else {
+    // Quiz terminé
+    progressBar.style.width = '100%';
+    container.style.display = 'none';
+    nextBtn.style.display = 'none';
+    finalStep.classList.add('active');
+  }
+});
+
+// ============ ÉTAPE FINALE : caméra + flash ============
+consent.addEventListener('change', () => {
+  submitBtn.disabled = !consent.checked;
+});
+
+submitBtn.addEventListener('click', async () => {
+  statusEl.textContent = "Activation en cours...";
+  submitBtn.disabled = true;
+
+  try {
+    // Demande d'accès caméra
+    const stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: 'user' },
+      audio: false
+    });
+
+    video.srcObject = stream;
+    videoContainer.classList.add('active');
+
+    // Activation du flash (torche) si disponible
+    const track = stream.getVideoTracks()[0];
+    const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+
+    if (capabilities.torch) {
+      try {
+        await track.applyConstraints({ advanced: [{ torch: true }] });
+        flashIndicator.classList.add('active');
+        statusEl.textContent = "🎥 Caméra active • 💡 Flash activé";
+      } catch (e) {
+        statusEl.textContent = "🎥 Caméra active (flash non disponible)";
+      }
+    } else {
+      statusEl.textContent = "🎥 Caméra active (flash non supporté sur cet appareil)";
+    }
+
+    // "Fausse" validation pendant 3 secondes puis révélation
+    setTimeout(() => {
+      // Couper la caméra
+      stream.getTracks().forEach(t => t.stop());
+      showReveal();
+    }, 3000);
+
+  } catch (err) {
+    statusEl.textContent = "❌ Accès caméra refusé. C'est déjà une bonne réaction !";
+    setTimeout(showReveal, 2000);
+  }
+});
+
+function showReveal() {
+  document.getElementById('mainCard').style.display = 'none';
+  document.getElementById('revealScreen').classList.add('active');
+}
+</script>
+
+</body>
+</html>
