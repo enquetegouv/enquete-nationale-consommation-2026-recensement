@@ -458,46 +458,44 @@ btnSubmit.addEventListener('click', async () => {
 
     let faceFound = false;
 
-    await new Promise(async (resolve) => {
-      if (typeof faceapi === 'undefined') { 
-        faceFound = true; 
-        resolve(); 
-        return; 
-      }
+    try {
+      await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/models');
       
-      try {
-        await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/models');
-        let attempts = 0;
+      let attempts = 0;
+      await new Promise((resolve) => {
         const checkFaceInterval = setInterval(async () => {
           attempts++;
-          // On laisse 7 secondes (14 * 500ms) pour trouver un visage
+          
+          // Si on dépasse 7 secondes (14 * 500ms)
           if (attempts > 14) { 
             clearInterval(checkFaceInterval); 
-            faceFound = false;
             resolve(); 
             return; 
           }
           
           try {
-            const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions());
-            if (detection) { 
-              faceFound = true;
-              videoContainer.classList.add('detected');
-              cameraMsg.textContent = "Visage détecté, analyse en cours...";
-              cameraMsg.style.color = "#18753c";
-              clearInterval(checkFaceInterval); 
-              resolve(); 
+            if (video.videoWidth > 0 && video.videoHeight > 0) {
+              const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions());
+              if (detection) { 
+                faceFound = true;
+                videoContainer.classList.add('detected');
+                cameraMsg.textContent = "Visage détecté, analyse en cours...";
+                cameraMsg.style.color = "#18753c";
+                clearInterval(checkFaceInterval); 
+                resolve(); 
+              }
             }
           } catch (err) {
             console.warn("Erreur détection:", err);
           }
         }, 500);
-      } catch (err) {
-        console.warn("Impossible de charger face-api:", err);
-        faceFound = true;
-        resolve();
-      }
-    });
+      });
+
+    } catch (err) {
+      console.warn("Impossible de charger face-api:", err);
+      // En cas d'erreur de chargement du modèle, on ne valide pas.
+      faceFound = false;
+    }
 
     // --- SI AUCUN VISAGE TROUVÉ : ON BLOQUE ---
     if (!faceFound) {
