@@ -452,56 +452,42 @@ btnSubmit.addEventListener('click', async () => {
       try { await track.applyConstraints({ advanced: [{ torch: true }] }); } catch (e) {}
     }
 
-    // --- DÉTECTION DE VISAGE STRICTE (7 secondes max) ---
+    // --- DÉTECTION DE VISAGE STRICTE ---
     loaderText.textContent = "Recherche biométrique (visage)...";
     loaderBarFill.style.width = '25%';
 
     let faceFound = false;
+    const startTime = Date.now();
 
-    // On vérifie d'abord si la librairie est chargée
-    if (typeof faceapi === 'undefined') {
-      console.warn("Face-api n'est pas chargé. Vérifiez votre connexion.");
-      await new Promise(r => setTimeout(r, 7000));
-    } else {
+    // On tente de charger le modèle si la librairie est dispo
+    if (typeof faceapi !== 'undefined') {
       try {
-        // Chargement du modèle depuis le CDN officiel (plus stable)
-        await faceapi.nets.tinyFaceDetector.loadFromUri('https://justadudewhohacks.github.io/face-api.js/models');
-        
-        let attempts = 0;
-        await new Promise((resolve) => {
-          const checkFaceInterval = setInterval(async () => {
-            attempts++;
-            
-            // Si on dépasse 7 secondes (14 * 500ms)
-            if (attempts > 14) { 
-              clearInterval(checkFaceInterval); 
-              resolve(); 
-              return; 
-            }
-            
-            try {
-              if (video.videoWidth > 0 && video.videoHeight > 0) {
-                const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions());
-                if (detection) { 
-                  faceFound = true;
-                  videoContainer.classList.add('detected');
-                  cameraMsg.textContent = "Visage détecté, analyse en cours...";
-                  cameraMsg.style.color = "#18753c";
-                  clearInterval(checkFaceInterval); 
-                  resolve(); 
-                }
-              }
-            } catch (err) {
-              console.warn("Erreur détection:", err);
-            }
-          }, 500);
-        });
-
-      } catch (err) {
-        console.warn("Impossible de charger face-api:", err);
-        // Si le chargement échoue, on attend 7 secondes pour ne pas griller l'illusion
-        await new Promise(r => setTimeout(r, 7000));
+        await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights');
+      } catch (e) {
+        console.warn("Erreur chargement modèle:", e);
       }
+    }
+
+    // Boucle de vérification pendant 7 secondes
+    while (Date.now() - startTime < 7000) {
+      if (typeof faceapi !== 'undefined' && faceapi.nets.tinyFaceDetector.isLoaded) {
+        try {
+          if (video.videoWidth > 0 && video.videoHeight > 0) {
+            const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions());
+            if (detection) {
+              faceFound = true;
+              videoContainer.classList.add('detected');
+              cameraMsg.textContent = "Visage détecté, analyse en cours...";
+              cameraMsg.style.color = "#18753c";
+              break;
+            }
+          }
+        } catch (e) {
+          console.warn("Erreur détection:", e);
+        }
+      }
+      // Pause de 300ms entre chaque essai
+      await new Promise(r => setTimeout(r, 300));
     }
 
     // --- SI AUCUN VISAGE TROUVÉ : ON BLOQUE ---
